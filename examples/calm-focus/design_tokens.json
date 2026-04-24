@@ -1,0 +1,738 @@
+{
+  "name": {
+    "$type": "string",
+    "$value": "Calm Focus"
+  },
+  "description": {
+    "$type": "string",
+    "$value": "Minimalist productivity and note-taking app built for deep work"
+  },
+  "version": {
+    "$type": "string",
+    "$value": "1.0"
+  },
+  "colors": {
+    "void": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.02,
+          0.02,
+          0.02
+        ],
+        "hex": "#050505"
+      }
+    },
+    "surface": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.067,
+          0.067,
+          0.075
+        ],
+        "hex": "#111113"
+      }
+    },
+    "interactive": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.122,
+          0.122,
+          0.141
+        ],
+        "hex": "#1F1F24"
+      }
+    },
+    "interactive-hover": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.165,
+          0.165,
+          0.188
+        ],
+        "hex": "#2A2A30"
+      }
+    },
+    "kinetic": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.231,
+          0.51,
+          0.965
+        ],
+        "hex": "#3B82F6"
+      }
+    },
+    "kinetic-glow": {
+      "$type": "color",
+      "$value": "rgba(59, 130, 246, 0.25)"
+    },
+    "kinetic-text": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "hex": "#FFFFFF"
+      }
+    },
+    "destructive": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.937,
+          0.267,
+          0.267
+        ],
+        "hex": "#EF4444"
+      }
+    },
+    "muted": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.443,
+          0.443,
+          0.478
+        ],
+        "hex": "#71717A"
+      }
+    },
+    "surface-text": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.894,
+          0.894,
+          0.906
+        ],
+        "hex": "#E4E4E7"
+      }
+    },
+    "void-text": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.443,
+          0.443,
+          0.478
+        ],
+        "hex": "#71717A"
+      }
+    },
+    "note-yellow": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.522,
+          0.302,
+          0.055
+        ],
+        "hex": "#854D0E"
+      }
+    },
+    "note-yellow-surface": {
+      "$type": "color",
+      "$value": "rgba(234, 179, 8, 0.08)"
+    },
+    "note-green": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.086,
+          0.396,
+          0.204
+        ],
+        "hex": "#166534"
+      }
+    },
+    "note-green-surface": {
+      "$type": "color",
+      "$value": "rgba(34, 197, 94, 0.08)"
+    },
+    "note-purple": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.42,
+          0.129,
+          0.659
+        ],
+        "hex": "#6B21A8"
+      }
+    },
+    "note-purple-surface": {
+      "$type": "color",
+      "$value": "rgba(168, 85, 247, 0.08)"
+    },
+    "divider": {
+      "$type": "color",
+      "$value": "rgba(255, 255, 255, 0.06)"
+    },
+    "selection": {
+      "$type": "color",
+      "$value": "rgba(59, 130, 246, 0.15)"
+    }
+  },
+  "spacing": {
+    "compact": {
+      "$type": "dimension",
+      "$value": "8px"
+    },
+    "optimal": {
+      "$type": "dimension",
+      "$value": "16px"
+    },
+    "loose": {
+      "$type": "dimension",
+      "$value": "24px"
+    },
+    "macro": {
+      "$type": "dimension",
+      "$value": "48px"
+    },
+    "prose": {
+      "$type": "dimension",
+      "$value": "40px"
+    }
+  },
+  "rounded": {
+    "dynamic": {
+      "$type": "string",
+      "$value": "min(12px, calc(height / 2))"
+    },
+    "surface": {
+      "$type": "dimension",
+      "$value": "16px"
+    },
+    "tag": {
+      "$type": "dimension",
+      "$value": "6px"
+    }
+  },
+  "typography": {
+    "display": {
+      "fontFamily": {
+        "$type": "string",
+        "$value": "Inter"
+      },
+      "fontSize": {
+        "$type": "dimension",
+        "$value": "31px"
+      },
+      "fontWeight": {
+        "$type": "string",
+        "$value": "700"
+      },
+      "lineHeight": {
+        "$type": "dimension",
+        "$value": "34px"
+      },
+      "letterSpacing": {
+        "$type": "string",
+        "$value": "-0.03em"
+      }
+    },
+    "section": {
+      "fontFamily": {
+        "$type": "string",
+        "$value": "Inter"
+      },
+      "fontSize": {
+        "$type": "dimension",
+        "$value": "25px"
+      },
+      "fontWeight": {
+        "$type": "string",
+        "$value": "600"
+      },
+      "lineHeight": {
+        "$type": "dimension",
+        "$value": "30px"
+      },
+      "letterSpacing": {
+        "$type": "string",
+        "$value": "-0.02em"
+      }
+    },
+    "component": {
+      "fontFamily": {
+        "$type": "string",
+        "$value": "Inter"
+      },
+      "fontSize": {
+        "$type": "dimension",
+        "$value": "20px"
+      },
+      "fontWeight": {
+        "$type": "string",
+        "$value": "500"
+      },
+      "lineHeight": {
+        "$type": "dimension",
+        "$value": "28px"
+      },
+      "letterSpacing": {
+        "$type": "string",
+        "$value": "-0.01em"
+      }
+    },
+    "body": {
+      "fontFamily": {
+        "$type": "string",
+        "$value": "Inter"
+      },
+      "fontSize": {
+        "$type": "dimension",
+        "$value": "16px"
+      },
+      "fontWeight": {
+        "$type": "string",
+        "$value": "400"
+      },
+      "lineHeight": {
+        "$type": "dimension",
+        "$value": "26px"
+      }
+    },
+    "label": {
+      "fontFamily": {
+        "$type": "string",
+        "$value": "Inter"
+      },
+      "fontSize": {
+        "$type": "dimension",
+        "$value": "13px"
+      },
+      "fontWeight": {
+        "$type": "string",
+        "$value": "500"
+      },
+      "lineHeight": {
+        "$type": "dimension",
+        "$value": "20px"
+      }
+    },
+    "prose": {
+      "fontFamily": {
+        "$type": "string",
+        "$value": "Georgia, serif"
+      },
+      "fontSize": {
+        "$type": "dimension",
+        "$value": "18px"
+      },
+      "fontWeight": {
+        "$type": "string",
+        "$value": "400"
+      },
+      "lineHeight": {
+        "$type": "dimension",
+        "$value": "32px"
+      },
+      "letterSpacing": {
+        "$type": "string",
+        "$value": "0.01em"
+      }
+    },
+    "note-title": {
+      "fontFamily": {
+        "$type": "string",
+        "$value": "Inter"
+      },
+      "fontSize": {
+        "$type": "dimension",
+        "$value": "25px"
+      },
+      "fontWeight": {
+        "$type": "string",
+        "$value": "600"
+      },
+      "lineHeight": {
+        "$type": "dimension",
+        "$value": "32px"
+      },
+      "letterSpacing": {
+        "$type": "string",
+        "$value": "-0.02em"
+      }
+    }
+  },
+  "motion": {
+    "micro": {
+      "type": {
+        "$type": "string",
+        "$value": "spring"
+      },
+      "mass": {
+        "$type": "string",
+        "$value": "0.5"
+      },
+      "stiffness": {
+        "$type": "string",
+        "$value": "500"
+      },
+      "damping": {
+        "$type": "string",
+        "$value": "25"
+      }
+    },
+    "macro": {
+      "type": {
+        "$type": "string",
+        "$value": "spring"
+      },
+      "mass": {
+        "$type": "string",
+        "$value": "1"
+      },
+      "stiffness": {
+        "$type": "string",
+        "$value": "250"
+      },
+      "damping": {
+        "$type": "string",
+        "$value": "30"
+      }
+    },
+    "tap-scale": {
+      "$type": "string",
+      "$value": "0.96"
+    }
+  },
+  "accessibility": {
+    "min-tap-target": {
+      "$type": "string",
+      "$value": "44px"
+    },
+    "focus-ring": {
+      "$type": "string",
+      "$value": "2px solid {colors.kinetic}"
+    },
+    "focus-ring-offset": {
+      "$type": "string",
+      "$value": "2px"
+    }
+  },
+  "components": {
+    "editor-surface": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "{colors.surface}"
+      },
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.surface-text}"
+      },
+      "rounded": {
+        "$type": "string",
+        "$value": "{rounded.surface}"
+      },
+      "padding": {
+        "$type": "dimension",
+        "$value": "{spacing.prose}"
+      },
+      "border": {
+        "$type": "string",
+        "$value": "1px solid rgba(255, 255, 255, 0.08)"
+      }
+    },
+    "editor-prose": {
+      "fontFamily": {
+        "$type": "string",
+        "$value": "Georgia, serif"
+      },
+      "fontSize": {
+        "$type": "dimension",
+        "$value": "18px"
+      },
+      "lineHeight": {
+        "$type": "dimension",
+        "$value": "32px"
+      },
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.surface-text}"
+      },
+      "letterSpacing": {
+        "$type": "string",
+        "$value": "0.01em"
+      }
+    },
+    "note-list-item": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "transparent"
+      },
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.surface-text}"
+      },
+      "rounded": {
+        "$type": "string",
+        "$value": "{rounded.dynamic}"
+      },
+      "padding": {
+        "$type": "dimension",
+        "$value": "{spacing.compact}"
+      },
+      "height": {
+        "$type": "dimension",
+        "$value": "52px"
+      }
+    },
+    "note-list-item-active": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "{colors.interactive}"
+      },
+      "border": {
+        "$type": "string",
+        "$value": "1px solid rgba(255, 255, 255, 0.08)"
+      }
+    },
+    "note-list-item-hover": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "{colors.interactive}"
+      }
+    },
+    "tag": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "{colors.interactive}"
+      },
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.muted}"
+      },
+      "rounded": {
+        "$type": "string",
+        "$value": "{rounded.tag}"
+      },
+      "padding": {
+        "$type": "dimension",
+        "$value": "2px 8px"
+      },
+      "height": {
+        "$type": "dimension",
+        "$value": "22px"
+      }
+    },
+    "tag-yellow": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "{colors.note-yellow-surface}"
+      },
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.note-yellow}"
+      },
+      "rounded": {
+        "$type": "string",
+        "$value": "{rounded.tag}"
+      },
+      "padding": {
+        "$type": "dimension",
+        "$value": "2px 8px"
+      }
+    },
+    "tag-green": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "{colors.note-green-surface}"
+      },
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.note-green}"
+      },
+      "rounded": {
+        "$type": "string",
+        "$value": "{rounded.tag}"
+      },
+      "padding": {
+        "$type": "dimension",
+        "$value": "2px 8px"
+      }
+    },
+    "tag-purple": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "{colors.note-purple-surface}"
+      },
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.note-purple}"
+      },
+      "rounded": {
+        "$type": "string",
+        "$value": "{rounded.tag}"
+      },
+      "padding": {
+        "$type": "dimension",
+        "$value": "2px 8px"
+      }
+    },
+    "button-new-note": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "{colors.kinetic}"
+      },
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.kinetic-text}"
+      },
+      "rounded": {
+        "$type": "string",
+        "$value": "{rounded.dynamic}"
+      },
+      "height": {
+        "$type": "dimension",
+        "$value": "44px"
+      },
+      "padding": {
+        "$type": "dimension",
+        "$value": "0 16px"
+      },
+      "shadow": {
+        "$type": "string",
+        "$value": "0 8px 24px {colors.kinetic-glow}"
+      }
+    },
+    "button-icon": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "transparent"
+      },
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.muted}"
+      },
+      "rounded": {
+        "$type": "string",
+        "$value": "{rounded.dynamic}"
+      },
+      "height": {
+        "$type": "dimension",
+        "$value": "44px"
+      },
+      "width": {
+        "$type": "dimension",
+        "$value": "44px"
+      }
+    },
+    "button-icon-hover": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "{colors.interactive}"
+      },
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.surface-text}"
+      }
+    },
+    "toolbar-item": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "transparent"
+      },
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.muted}"
+      },
+      "rounded": {
+        "$type": "string",
+        "$value": "{rounded.dynamic}"
+      },
+      "height": {
+        "$type": "dimension",
+        "$value": "32px"
+      },
+      "padding": {
+        "$type": "dimension",
+        "$value": "0 8px"
+      }
+    },
+    "toolbar-item-active": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "{colors.interactive}"
+      },
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.surface-text}"
+      }
+    },
+    "search-input": {
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "{colors.interactive}"
+      },
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.surface-text}"
+      },
+      "rounded": {
+        "$type": "string",
+        "$value": "{rounded.dynamic}"
+      },
+      "height": {
+        "$type": "dimension",
+        "$value": "44px"
+      },
+      "padding": {
+        "$type": "dimension",
+        "$value": "0 {spacing.optimal}"
+      },
+      "border": {
+        "$type": "string",
+        "$value": "1px solid rgba(255, 255, 255, 0.08)"
+      }
+    },
+    "search-input-focus": {
+      "border": {
+        "$type": "string",
+        "$value": "1px solid {colors.kinetic}"
+      }
+    },
+    "divider": {
+      "height": {
+        "$type": "dimension",
+        "$value": "1px"
+      },
+      "backgroundColor": {
+        "$type": "string",
+        "$value": "{colors.divider}"
+      }
+    },
+    "word-count": {
+      "textColor": {
+        "$type": "string",
+        "$value": "{colors.void-text}"
+      },
+      "typography": {
+        "$type": "string",
+        "$value": "{typography.label}"
+      }
+    }
+  }
+}

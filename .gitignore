@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+*.tsbuildinfo
+.env
+.env.local
+coverage/
+
+# Internal drafts — not part of the public project
+SYSTEM_PROMPT.md
+LINKEDIN_POST.md

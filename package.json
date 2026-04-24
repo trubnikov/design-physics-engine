@@ -1,0 +1,58 @@
+{
+  "name": "@trubnikov/physics-engine",
+  "version": "1.0.0",
+  "description": "A generative design system based on physical laws, not static values. Every dimension, color, and motion is calculated — never hardcoded.",
+  "type": "module",
+  "main": "dist/design-physics-engine.js",
+  "types": "dist/design-physics-engine.d.ts",
+  "bin": {
+    "physics-engine": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint:design": "node dist/cli.js lint DESIGN.md",
+    "export:tailwind": "node dist/cli.js export --format tailwind DESIGN.md",
+    "export:dtcg": "node dist/cli.js export --format dtcg DESIGN.md",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "exports": {
+    ".": "./dist/design-physics-engine.js",
+    "./linter": "./dist/lint.js",
+    "./exporter": "./dist/export.js",
+    "./parser": "./dist/parse.js"
+  },
+  "keywords": [
+    "design-system",
+    "ai",
+    "physics",
+    "ui",
+    "tokens",
+    "tailwind",
+    "framer-motion",
+    "design.md",
+    "wcag",
+    "generative",
+    "typography"
+  ],
+  "author": {
+    "name": "Dima Trubnikov",
+    "url": "https://github.com/trubnikov"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/trubnikov/physics-engine.git"
+  },
+  "homepage": "https://github.com/trubnikov/physics-engine#readme",
+  "bugs": {
+    "url": "https://github.com/trubnikov/physics-engine/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.39",
+    "typescript": "^5.9.3"
+  }
+}

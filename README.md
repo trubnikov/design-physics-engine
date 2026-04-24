@@ -245,4 +245,4 @@ npx @trubnikov/physics-engine lint DESIGN.md # Physics Engine linter (adds Fitts
 
 ## License
 
-MIT © [Dima Trubnikov](https://github.com/trubnikov)
+MIT ©2026 [Dima Trubnikov](https://github.com/trubnikov)

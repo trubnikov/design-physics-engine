@@ -18,14 +18,7 @@ export const DensityScale = {
   Loose: BASE_UNIT * 6,     // 24px - macro spacing
 } as const;
 
-/**
- * Calculates dynamic radius based on element height.
- * Formula: min(Base_Unit * 3, height / 2)
- * Prevents over-rounding on small elements.
- */
-export const calculateRadius = (height: number): number => {
-  return Math.min(BASE_UNIT * 3, height / 2);
-};
+
 
 export const SURFACE_RADIUS = BASE_UNIT * 4; // 16px for cards/modals
 
@@ -138,6 +131,25 @@ export const MotionPresets = {
   }, // Modals, sidebars
 } as const;
 
+/**
+ * Maps Spring physics (stiffness, damping, mass) to CSS transition parameters.
+ */
+export function springToCss(spring: SpringConfig) {
+  const { mass, stiffness, damping } = spring;
+  const w0 = Math.sqrt(stiffness / mass);
+  const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass));
+  
+  // Settling time (5% error band) for duration
+  const duration = (3 / (dampingRatio * w0)).toFixed(3);
+  
+  // Map damping ratio to standard bezier approximation
+  const bezier = dampingRatio < 1 
+    ? `cubic-bezier(0.34, 1.56, 0.64, 1)` // Underdamped (bouncy)
+    : `cubic-bezier(0.4, 0.0, 0.2, 1)`;   // Critically damped (smooth)
+    
+  return { duration, bezier };
+}
+
 // ==========================================
 // 5. SEMANTIC SKELETON (Accessibility)
 // ==========================================
@@ -171,6 +183,7 @@ export interface GeneratedStyles {
   boxShadow?: string;
   border?: string;
   fontFamily?: string;
+  containerType?: string;
   transition?: string;
   transform?: string;
   [key: string]: any;
@@ -200,14 +213,16 @@ export function generateStyles(config: ComponentConfig): GeneratedStyles {
   // Apply Spatial Math based on component type
   if (type === 'button' || type === 'input') {
     styles.padding = `${DensityScale.Optimal}px`; // 16px
-    styles.borderRadius = height ? `${calculateRadius(height)}px` : `${SURFACE_RADIUS}px`;
+    styles.containerType = 'normal';
+    styles.borderRadius = `clamp(0px, 50cqh, ${BASE_UNIT * 3}px)`;
     
     // Enforce Fitts Law
     const minSize = Math.max(height, Accessibility.MIN_HITBOX);
     styles.minHeight = `${minSize}px`;
     
     if (isInteractive) {
-      styles.transition = "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)";
+      const { duration, bezier } = springToCss(MotionPresets.micro);
+      styles.transition = `all ${duration}s ${bezier}`;
       // Simulate press state compression
       if (isActive) {
         styles.transform = "scale(0.96)";
@@ -227,50 +242,13 @@ export function generateStyles(config: ComponentConfig): GeneratedStyles {
 // 7. RUNTIME PHYSICS (Dynamic Calculations)
 // ==========================================
 
-// Color Math Utilities
-function hexToHsl(hex: string): [number, number, number] {
-  const clean = hex.replace('#', '');
-  const full = clean.length === 3 ? clean.split('').map(c => c + c).join('') : clean;
-  const r = parseInt(full.slice(0, 2), 16) / 255;
-  const g = parseInt(full.slice(2, 4), 16) / 255;
-  const b = parseInt(full.slice(4, 6), 16) / 255;
-
-  const max = Math.max(r, g, b), min = Math.min(r, g, b);
-  let h = 0, s = 0, l = (max + min) / 2;
-
-  if (max !== min) {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
-    }
-    h /= 6;
-  }
-  return [h * 360, s * 100, l * 100];
-}
-
-function hslToHex(h: number, s: number, l: number): string {
-  l /= 100;
-  const a = s * Math.min(l, 1 - l) / 100;
-  const f = (n: number) => {
-    const k = (n + h / 30) % 12;
-    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-    return Math.round(255 * color).toString(16).padStart(2, '0');
-  };
-  return `#${f(0)}${f(8)}${f(4)}`;
-}
-
 /**
  * Calculates a new color based on added energy.
- * Rule: +1 Energy = +10% Lightness (for dark themes)
+ * Synchronizes color math to perceptual OKLCH space natively in CSS.
+ * Rule: +1 Energy = +5% Lightness
  */
-export function calculateEnergyColor(baseHex: string, deltaEnergy: number): string {
-  const [h, s, l] = hexToHsl(baseHex);
-  // Cap lightness at 100%
-  const newL = Math.min(100, Math.max(0, l + (deltaEnergy * 10)));
-  return hslToHex(h, s, newL);
+export function calculateEnergyColor(baseColor: string, deltaEnergy: number): string {
+  return `oklch(from ${baseColor} calc(l + ${deltaEnergy * 0.05}) c h)`;
 }
 
 /**

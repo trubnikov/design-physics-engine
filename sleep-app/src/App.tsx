@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Pause, Volume2, Moon, Star, Sparkles, Wind, Music, Timer, Settings2, Shuffle } from 'lucide-react';
 import { Canvas, useFrame } from '@react-three/fiber';
@@ -54,9 +54,28 @@ function MoonSphere({ color }: { color: string }) {
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeNode, setActiveNode] = useState(2);
+  const [volume, setVolume] = useState(0.6);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.play().catch(console.error);
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  }, [isPlaying, activeNode]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
 
   return (
     <>
+      <audio ref={audioRef} loop src={`/audio/${activeNode}.ogg`} />
       {/* 1. Header Area */}
       <div
         style={{
@@ -203,24 +222,19 @@ function App() {
         {/* Right Action: Volume Slider */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-compact)' }}>
           <Volume2 size={20} color={baseKinetic} />
-          <div
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={volume}
+            onChange={(e) => setVolume(parseFloat(e.target.value))}
             style={{
               width: '100px',
-              height: '4px',
-              backgroundColor: baseInteractive,
-              borderRadius: '2px',
-              position: 'relative',
+              accentColor: baseKinetic,
+              cursor: 'pointer'
             }}
-          >
-            <div
-              style={{
-                width: '60%',
-                height: '100%',
-                backgroundColor: baseKinetic,
-                borderRadius: '2px',
-              }}
-            />
-          </div>
+          />
         </div>
       </div>
     </>

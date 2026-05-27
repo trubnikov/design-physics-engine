@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Pause, Volume2, Moon, Star, Sparkles, Wind, Music, Timer, Settings2, Shuffle } from 'lucide-react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Stars, OrbitControls } from '@react-three/drei';
+import * as THREE from 'three';
 import './index.css';
-import { calculateEnergyColor, calculateGlow, calculateIconSize, calculateRadius } from '../../src/design-physics-engine';
+import { calculateEnergyColor, calculateGlow, calculateIconSize } from '../../src/design-physics-engine';
 
 // Kinematics spring config from prompt
 const springTransition = {
@@ -19,9 +22,34 @@ const baseKinetic = '#FFFFFF';
 
 // Dynamic Physics Calcs
 const hoverInteractive = calculateEnergyColor(baseInteractive, 0.5); // Level 2 + 0.5
-const glowKinetic = calculateGlow(120, 120, 3, baseKinetic); // Area based glow
 const iconSizeCircle = calculateIconSize(48); // 48 / 2.4 = 20
 const iconSizePill = calculateIconSize(44); // 44 / 2.4 = 18
+
+// 3D Moon Component
+function MoonSphere({ color }: { color: string }) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  
+  useFrame(() => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += 0.005;
+      meshRef.current.rotation.x += 0.002;
+    }
+  });
+
+  return (
+    <mesh ref={meshRef}>
+      <sphereGeometry args={[1.5, 64, 64]} />
+      <meshStandardMaterial 
+        color={color} 
+        emissive={color}
+        emissiveIntensity={0.2}
+        roughness={0.7}
+        metalness={0.1}
+        wireframe={true} // Add a digital/physics wireframe aesthetic
+      />
+    </mesh>
+  );
+}
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -47,7 +75,7 @@ function App() {
             letterSpacing: '-0.02em',
           }}
         >
-          Sleep
+          Sleep Space
         </h1>
         <p
           style={{
@@ -59,52 +87,42 @@ function App() {
         </p>
       </div>
 
-      {/* 2. Constellation Interactive Card */}
+      {/* 2. Constellation Interactive Card (Now with 3D Canvas) */}
       <motion.div
         style={{
           width: '100%',
           height: '520px',
           backgroundColor: baseSurface,
           border: `1px solid ${baseInteractive}`,
-          borderRadius: `${calculateRadius(520)}px`, // Real topology collapse min(12px, 520/2) wait, original radius for surface is 16px. The prompt asked for min(32px, height/2). Let's use 32px directly as we can't change the engine's constant.
-          borderTopLeftRadius: '32px',
-          borderTopRightRadius: '32px',
-          borderBottomLeftRadius: '32px',
-          borderBottomRightRadius: '32px',
+          borderRadius: `32px`,
           marginBottom: 'var(--space-loose)',
           marginTop: 'var(--space-loose)',
           position: 'relative',
           overflow: 'hidden',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
         }}
       >
-        {/* Placeholder for Constellation Nodes */}
-        <motion.div
-          whileTap={{ scale: 0.9 }}
-          transition={springTransition}
-          style={{
-            width: '120px',
-            height: '120px',
-            borderRadius: '50%',
-            border: `1.5px solid ${baseKinetic}`,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            boxShadow: glowKinetic, // dynamic glow
-            cursor: 'pointer'
-          }}
-        >
-          <Moon size={48} color={baseKinetic} />
-        </motion.div>
+        <Canvas camera={{ position: [0, 0, 5], fov: 60 }} style={{ width: '100%', height: '100%', cursor: 'grab' }}>
+          <ambientLight intensity={0.1} />
+          <pointLight position={[10, 10, 10]} intensity={1} color={baseKinetic} />
+          <pointLight position={[-10, -10, -10]} intensity={0.5} color={baseInteractive} />
+          
+          <MoonSphere color={baseKinetic} />
+          <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
+          <OrbitControls 
+            enableZoom={false} 
+            enablePan={false} 
+            autoRotate 
+            autoRotateSpeed={0.5} 
+            minPolarAngle={Math.PI / 3} 
+            maxPolarAngle={Math.PI / 1.5} 
+          />
+        </Canvas>
 
-        {/* Constellation Nodes around */}
-        <ConstellationNode top="20%" left="30%" />
-        <ConstellationNode top="70%" left="25%" />
-        <ConstellationNode top="30%" left="70%" />
-        <ConstellationNode top="60%" left="75%" />
-        <ConstellationNode top="80%" left="50%" />
+        {/* Floating UI Elements Overlaying the 3D Space */}
+        <ConstellationNode top="10%" left="20%" />
+        <ConstellationNode top="80%" left="30%" />
+        <ConstellationNode top="20%" left="80%" />
+        <ConstellationNode top="70%" left="75%" />
       </motion.div>
 
       {/* 3. Category Carousel */}
@@ -224,8 +242,9 @@ function ConstellationNode({ top, left }: { top: string, left: string }) {
         height: `${size}px`,
         backgroundColor: baseInteractive,
         borderRadius: '50%',
-        boxShadow: calculateGlow(size, size, 1, baseKinetic), // dynamic glow for small node
-        cursor: 'pointer'
+        boxShadow: calculateGlow(size, size, 1, baseKinetic), // dynamic glow
+        cursor: 'pointer',
+        pointerEvents: 'auto'
       }}
     />
   );
@@ -249,6 +268,7 @@ function PillButton({ icon, label }: { icon: React.ReactNode, label: string }) {
         fontSize: '14px',
         fontWeight: 500,
         color: baseKinetic,
+        border: 'none',
       }}
     >
       {icon}

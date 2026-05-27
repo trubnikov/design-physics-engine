@@ -4,7 +4,8 @@
  * Compatible with @google/design.md finding schema.
  */
 
-import { parseDesignMd, resolveRef, DesignSystem } from './parse.js';
+import { parseDesignMd, resolveRef } from './parse.js';
+import type { DesignSystem } from './design-physics-engine';
 
 export type Severity = 'error' | 'warning' | 'info';
 

@@ -223,6 +223,81 @@ export function generateStyles(config: ComponentConfig): GeneratedStyles {
 
   return styles;
 }
+// ==========================================
+// 7. RUNTIME PHYSICS (Dynamic Calculations)
+// ==========================================
+
+// Color Math Utilities
+function hexToHsl(hex: string): [number, number, number] {
+  const clean = hex.replace('#', '');
+  const full = clean.length === 3 ? clean.split('').map(c => c + c).join('') : clean;
+  const r = parseInt(full.slice(0, 2), 16) / 255;
+  const g = parseInt(full.slice(2, 4), 16) / 255;
+  const b = parseInt(full.slice(4, 6), 16) / 255;
+
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0, l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+  return [h * 360, s * 100, l * 100];
+}
+
+function hslToHex(h: number, s: number, l: number): string {
+  l /= 100;
+  const a = s * Math.min(l, 1 - l) / 100;
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, '0');
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+/**
+ * Calculates a new color based on added energy.
+ * Rule: +1 Energy = +10% Lightness (for dark themes)
+ */
+export function calculateEnergyColor(baseHex: string, deltaEnergy: number): string {
+  const [h, s, l] = hexToHsl(baseHex);
+  // Cap lightness at 100%
+  const newL = Math.min(100, Math.max(0, l + (deltaEnergy * 10)));
+  return hslToHex(h, s, newL);
+}
+
+/**
+ * Calculates glow spread based on element area and energy level.
+ * Rule: Spread = sqrt(Area) * (Energy / 10)
+ */
+export function calculateGlow(width: number, height: number, energyLevel: number, colorHex: string): string {
+  if (energyLevel <= 0) return 'none';
+  const area = width * height;
+  const spread = Math.round(Math.sqrt(area) * (energyLevel / 10));
+  
+  // Convert hex to rgb for rgba shadow
+  const clean = colorHex.replace('#', '');
+  const r = parseInt(clean.slice(0, 2), 16);
+  const g = parseInt(clean.slice(2, 4), 16);
+  const b = parseInt(clean.slice(4, 6), 16);
+  
+  return `0 0 ${spread}px rgba(${r}, ${g}, ${b}, 0.25)`;
+}
+
+/**
+ * Calculates icon size based on container height.
+ * Rule: IconSize = ContainerHeight / 2.4
+ */
+export function calculateIconSize(containerHeight: number): number {
+  return Math.round(containerHeight / 2.4);
+}
 
 // Demo output if run directly
 if (typeof require !== 'undefined' && require.main === module) {

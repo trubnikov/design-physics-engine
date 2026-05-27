@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
+import { useGenerativeAudio } from './useGenerativeAudio';
 import { motion } from 'framer-motion';
 import { Play, Pause, Volume2, Moon, Star, Sparkles, Wind, Music, Timer, Settings2, Shuffle } from 'lucide-react';
 import { Canvas, useFrame } from '@react-three/fiber';
@@ -55,27 +56,11 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeNode, setActiveNode] = useState(2);
   const [volume, setVolume] = useState(0.6);
-  const audioRef = useRef<HTMLAudioElement>(null);
 
-  useEffect(() => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.play().catch(console.error);
-      } else {
-        audioRef.current.pause();
-      }
-    }
-  }, [isPlaying, activeNode]);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
-  }, [volume]);
+  useGenerativeAudio(activeNode, isPlaying, volume);
 
   return (
     <>
-      <audio ref={audioRef} loop src={`/audio/${activeNode}.ogg`} />
       {/* 1. Header Area */}
       <div
         style={{

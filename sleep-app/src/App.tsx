@@ -6,7 +6,7 @@ import { calculateEnergyColor, calculateGlow, calculateIconSize, calculateRadius
 
 // Kinematics spring config from prompt
 const springTransition = {
-  type: 'spring',
+  type: 'spring' as const,
   mass: 1.0,
   stiffness: 140,
   damping: 14,

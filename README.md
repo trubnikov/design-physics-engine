@@ -5,8 +5,8 @@
 Most design systems are dictionaries — you look up a value and apply it. Physics Engine is different. Every dimension, color, and motion is **calculated from first principles**. There are no magic numbers.
 
 ```bash
-npx @trubnikov/physics-engine lint DESIGN.md
-npx @trubnikov/physics-engine export --format tailwind DESIGN.md
+npx @dimkant/physics-engine lint DESIGN.md
+npx @dimkant/physics-engine export --format tailwind DESIGN.md
 ```
 
 ---
@@ -121,15 +121,15 @@ State transitions follow energy laws:
 ### Install
 
 ```bash
-npm install @trubnikov/physics-engine
+npm install @dimkant/physics-engine
 # or run directly:
-npx @trubnikov/physics-engine lint DESIGN.md
+npx @dimkant/physics-engine lint DESIGN.md
 ```
 
 ### `lint` — Validate your DESIGN.md
 
 ```bash
-npx @trubnikov/physics-engine lint DESIGN.md
+npx @dimkant/physics-engine lint DESIGN.md
 ```
 
 ```json
@@ -158,17 +158,17 @@ Exit code `1` if errors are found.
 
 ```bash
 # Tailwind theme config
-npx @trubnikov/physics-engine export --format tailwind DESIGN.md > tailwind.theme.json
+npx @dimkant/physics-engine export --format tailwind DESIGN.md > tailwind.theme.json
 
 # W3C Design Token Format (DTCG)
-npx @trubnikov/physics-engine export --format dtcg DESIGN.md > tokens.json
+npx @dimkant/physics-engine export --format dtcg DESIGN.md > tokens.json
 ```
 
 ### `spec` — Print the specification
 
 ```bash
-npx @trubnikov/physics-engine spec
-npx @trubnikov/physics-engine spec --format json
+npx @dimkant/physics-engine spec
+npx @dimkant/physics-engine spec --format json
 ```
 
 ---
@@ -176,8 +176,8 @@ npx @trubnikov/physics-engine spec --format json
 ## Programmatic API
 
 ```typescript
-import { lint } from '@trubnikov/physics-engine/linter';
-import { exportTokens } from '@trubnikov/physics-engine/exporter';
+import { lint } from '@dimkant/physics-engine/linter';
+import { exportTokens } from '@dimkant/physics-engine/exporter';
 
 const report = lint(designMdString);
 console.log(report.findings);    // Finding[]
@@ -192,7 +192,7 @@ const dtcg = exportTokens(designMdString, 'dtcg');
 
 ## Generating UI with AI
 
-Drop the `DESIGN.md` file (or the output of `npx @trubnikov/physics-engine spec`) into your AI agent's context. The agent now has everything it needs to generate correct, physics-consistent UI.
+Drop the `DESIGN.md` file (or the output of `npx @dimkant/physics-engine spec`) into your AI agent's context. The agent now has everything it needs to generate correct, physics-consistent UI.
 
 **Prompt example:**
 ```
@@ -249,7 +249,7 @@ Physics Engine's `DESIGN.md` format is compatible with and extends `@google/desi
 
 ```bash
 npx @google/design.md lint DESIGN.md        # Google's linter
-npx @trubnikov/physics-engine lint DESIGN.md # Physics Engine linter (adds Fitts Law, kinematics checks)
+npx @dimkant/physics-engine lint DESIGN.md # Physics Engine linter (adds Fitts Law, kinematics checks)
 ```
 
 ---

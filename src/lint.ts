@@ -4,8 +4,7 @@
  * Compatible with @google/design.md finding schema.
  */
 
-import { parseDesignMd, resolveRef } from './parse.js';
-import type { DesignSystem } from './design-physics-engine';
+import { parseDesignMd, resolveRef, type DesignSystem } from './parse.js';
 
 export type Severity = 'error' | 'warning' | 'info';
 
@@ -32,7 +31,7 @@ function checkBrokenRefs(ds: DesignSystem, findings: Finding[]) {
   const refRegex = /^\{.+\}$/;
 
   for (const [compName, comp] of Object.entries(ds.components || {})) {
-    for (const [prop, value] of Object.entries(comp)) {
+    for (const [prop, value] of Object.entries(comp as Record<string, unknown>)) {
       if (typeof value === 'string' && refRegex.test(value)) {
         const resolved = resolveRef(value, ds);
         if (resolved === null) {
@@ -72,8 +71,8 @@ function checkMissingPrimary(ds: DesignSystem, findings: Finding[]) {
  */
 function checkContrastRatios(ds: DesignSystem, findings: Finding[]) {
   for (const [compName, comp] of Object.entries(ds.components || {})) {
-    const bgRef = comp.backgroundColor;
-    const fgRef = comp.textColor;
+    const bgRef = (comp as any).backgroundColor;
+    const fgRef = (comp as any).textColor || (comp as any).color;
 
     if (!bgRef || !fgRef) continue;
 
@@ -118,7 +117,7 @@ function checkOrphanedTokens(ds: DesignSystem, findings: Finding[]) {
   const referenced = new Set<string>();
 
   for (const comp of Object.values(ds.components || {})) {
-    for (const value of Object.values(comp)) {
+    for (const value of Object.values(comp as Record<string, unknown>)) {
       if (typeof value === 'string') {
         const match = value.match(/^\{colors\.(.+)\}$/);
         if (match) referenced.add(match[1]);
@@ -156,7 +155,7 @@ function checkFittsLaw(ds: DesignSystem, findings: Finding[]) {
     const isVariant = stateVariants.some((v) => compName.endsWith(v));
     if (isVariant) continue;
 
-    const height = comp.height;
+    const height = (comp as any).height;
     if (!height) {
       findings.push({
         rule: 'fitts-law',
@@ -222,8 +221,8 @@ function checkMissingTypography(ds: DesignSystem, findings: Finding[]) {
  */
 function checkNestedRadiusLaw(ds: DesignSystem, findings: Finding[]) {
   for (const [compName, comp] of Object.entries(ds.components || {})) {
-    const roundedRef = comp.rounded;
-    const paddingRef = comp.padding;
+    const roundedRef = (comp as any).rounded;
+    const paddingRef = (comp as any).padding;
     if (!roundedRef || !paddingRef) continue;
 
     const roundedVal = resolveRef(roundedRef, ds) ?? roundedRef;

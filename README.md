@@ -11,6 +11,14 @@ npx @trubnikov/physics-engine export --format tailwind DESIGN.md
 
 ---
 
+## V2 Architecture (Runtime Physics)
+In Version 2, the engine shifted from static JS calculators to **Native Browser Physics**:
+- **Topology Collapse via Container Queries:** JS layout thrashing is eliminated. Radiuses are calculated on the GPU using `container-type: normal` and `clamp(0px, 50cqh, 12px)`.
+- **Perceptual Color Math (OKLCH):** Color energy levels transition flawlessly across Display P3 and sRGB using native CSS Level 5 relative colors (`oklch(from base calc(...) c h)`).
+- **Spring Kinematics in CSS:** Physical properties (`mass`, `stiffness`, `damping`) map directly to CSS `transition-duration` and `cubic-bezier` curves, ensuring color and scale change with identical inertia.
+
+---
+
 ## The Idea
 
 UI elements obey **physical laws**. A button press is not a CSS state change — it is an energy elevation and a physical compression. A card doesn't have a shadow — it has a low energy level that puts it above the void.
@@ -221,11 +229,14 @@ Build a login form.
 physics-engine/
 ├── DESIGN.md                    ← The design system (start here)
 ├── src/
-│   ├── design-physics-engine.ts ← TypeScript engine (runtime)
+│   ├── design-physics-engine.ts ← TypeScript engine (v2 runtime)
 │   ├── cli.ts                   ← CLI entry point
 │   ├── lint.ts                  ← Linter implementation
 │   ├── export.ts                ← Export to Tailwind / DTCG
 │   └── parse.ts                 ← DESIGN.md parser
+├── sleep-app/                   ← React/Three.js Interactive Prototype
+│   ├── src/App.tsx              ← WebGL Scene & React UI
+│   └── src/useGenerativeAudio.ts← Endel-style procedural audio mixer
 └── docs/
     └── spec.md                  ← Full specification
 ```

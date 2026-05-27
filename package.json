@@ -1,6 +1,5 @@
-{
   "name": "@trubnikov/physics-engine",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A generative design system based on physical laws, not static values. Every dimension, color, and motion is calculated — never hardcoded.",
   "type": "module",
   "main": "dist/design-physics-engine.js",

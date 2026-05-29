@@ -177,7 +177,7 @@ The Physics Engine `DESIGN.md` format is a strict extension of the `@google/desi
 
 ## Changelog
 
-### v1.0 (2024)
+### v1.0 (2026)
 - Initial release
 - Full YAML token schema
 - CLI: lint, export, spec

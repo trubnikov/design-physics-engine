@@ -4,7 +4,7 @@
  * Compatible with @google/design.md finding schema.
  */
 
-import { parseDesignMd, resolveRef, DesignSystem } from './parse.js';
+import { parseDesignMd, resolveRef, type DesignSystem } from './parse.js';
 
 export type Severity = 'error' | 'warning' | 'info';
 
@@ -31,7 +31,7 @@ function checkBrokenRefs(ds: DesignSystem, findings: Finding[]) {
   const refRegex = /^\{.+\}$/;
 
   for (const [compName, comp] of Object.entries(ds.components || {})) {
-    for (const [prop, value] of Object.entries(comp)) {
+    for (const [prop, value] of Object.entries(comp as Record<string, unknown>)) {
       if (typeof value === 'string' && refRegex.test(value)) {
         const resolved = resolveRef(value, ds);
         if (resolved === null) {
@@ -71,8 +71,8 @@ function checkMissingPrimary(ds: DesignSystem, findings: Finding[]) {
  */
 function checkContrastRatios(ds: DesignSystem, findings: Finding[]) {
   for (const [compName, comp] of Object.entries(ds.components || {})) {
-    const bgRef = comp.backgroundColor;
-    const fgRef = comp.textColor;
+    const bgRef = (comp as any).backgroundColor;
+    const fgRef = (comp as any).textColor || (comp as any).color;
 
     if (!bgRef || !fgRef) continue;
 
@@ -117,7 +117,7 @@ function checkOrphanedTokens(ds: DesignSystem, findings: Finding[]) {
   const referenced = new Set<string>();
 
   for (const comp of Object.values(ds.components || {})) {
-    for (const value of Object.values(comp)) {
+    for (const value of Object.values(comp as Record<string, unknown>)) {
       if (typeof value === 'string') {
         const match = value.match(/^\{colors\.(.+)\}$/);
         if (match) referenced.add(match[1]);
@@ -155,7 +155,7 @@ function checkFittsLaw(ds: DesignSystem, findings: Finding[]) {
     const isVariant = stateVariants.some((v) => compName.endsWith(v));
     if (isVariant) continue;
 
-    const height = comp.height;
+    const height = (comp as any).height;
     if (!height) {
       findings.push({
         rule: 'fitts-law',
@@ -215,6 +215,59 @@ function checkMissingTypography(ds: DesignSystem, findings: Finding[]) {
   }
 }
 
+/**
+ * Rule: nested-radius-law
+ * Outer radius must be >= padding to allow valid inner radius.
+ */
+function checkNestedRadiusLaw(ds: DesignSystem, findings: Finding[]) {
+  for (const [compName, comp] of Object.entries(ds.components || {})) {
+    const roundedRef = (comp as any).rounded;
+    const paddingRef = (comp as any).padding;
+    if (!roundedRef || !paddingRef) continue;
+
+    const roundedVal = resolveRef(roundedRef, ds) ?? roundedRef;
+    const paddingVal = resolveRef(paddingRef, ds) ?? paddingRef;
+
+    const rPx = parsePx(String(roundedVal));
+    const pPx = parsePx(String(paddingVal));
+
+    if (rPx !== null && pPx !== null && rPx < pPx) {
+      findings.push({
+        rule: 'nested-radius-law',
+        severity: 'error',
+        path: `components.${compName}`,
+        message: `Topology collapse: Outer radius (${rPx}px) is smaller than padding (${pPx}px). Inner radius would be negative.`,
+      });
+    }
+  }
+}
+
+/**
+ * Rule: energy-conservation
+ * Kinetic components must contrast against the Void background.
+ */
+function checkEnergyConservation(ds: DesignSystem, findings: Finding[]) {
+  const voidColorRef = ds.colors?.['void'];
+  const kineticColorRef = ds.colors?.['kinetic'] || ds.colors?.['primary'];
+
+  if (!voidColorRef || !kineticColorRef) return;
+
+  const voidColor = resolveRef(voidColorRef, ds) ?? voidColorRef;
+  const kineticColor = resolveRef(kineticColorRef, ds) ?? kineticColorRef;
+
+  if (!isHexColor(voidColor) || !isHexColor(kineticColor)) return;
+
+  const ratio = contrastRatio(voidColor, kineticColor);
+  if (ratio < 3.0) {
+    findings.push({
+      rule: 'energy-conservation',
+      severity: 'error',
+      path: 'colors.kinetic',
+      message: `Kinetic color (${kineticColor}) fails contrast against Void background (${voidColor}) with ratio ${ratio.toFixed(2)}:1. Energy emission too low.`,
+    });
+  }
+}
+
 // ─── Main Lint Function ───────────────────────────────────────────────────────
 
 export function lint(content: string): LintReport {
@@ -242,6 +295,8 @@ export function lint(content: string): LintReport {
   checkFittsLaw(frontMatter, findings);
   checkTokenSummary(frontMatter, findings);
   checkMissingTypography(frontMatter, findings);
+  checkNestedRadiusLaw(frontMatter, findings);
+  checkEnergyConservation(frontMatter, findings);
 
   const summary = {
     errors: findings.filter((f) => f.severity === 'error').length,

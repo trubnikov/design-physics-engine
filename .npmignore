@@ -1,0 +1,10 @@
+# Exclude development files from npm package
+sleep-app/
+node_modules/
+.github/
+*.map
+src/
+tsconfig.json
+SYSTEM_PROMPT.md
+LINKEDIN_POST.md
+.npmrc

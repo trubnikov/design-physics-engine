@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-lint:
+    name: Build & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Lint DESIGN.md
+        run: node dist/cli.js lint DESIGN.md
+
+      - name: Export — Tailwind
+        run: node dist/cli.js export --format tailwind DESIGN.md
+
+      - name: Export — DTCG
+        run: node dist/cli.js export --format dtcg DESIGN.md
+
+      - name: Export — SwiftUI
+        run: node dist/cli.js export --format swiftui DESIGN.md
+
+      - name: Lint examples
+        run: |
+          for dir in examples/*/; do
+            if [ -f "${dir}DESIGN.md" ]; then
+              echo "Linting ${dir}DESIGN.md"
+              node dist/cli.js lint "${dir}DESIGN.md"
+            fi
+          done

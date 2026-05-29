@@ -24,7 +24,23 @@ export interface ComponentToken {
   width?: string;
   size?: string;
   typography?: string;
+  motion?: string;
   [key: string]: string | undefined;
+}
+
+export interface MotionPreset {
+  type?: string;
+  mass?: number;
+  stiffness?: number;
+  damping?: number;
+  [key: string]: string | number | undefined;
+}
+
+export interface MotionTokens {
+  micro?: MotionPreset;
+  macro?: MotionPreset;
+  'tap-scale'?: number;
+  [key: string]: MotionPreset | number | undefined;
 }
 
 export interface DesignSystem {
@@ -35,6 +51,7 @@ export interface DesignSystem {
   typography: { [key: string]: TypographyToken };
   spacing: { [key: string]: string };
   rounded: { [key: string]: string };
+  motion?: MotionTokens;
   components: { [key: string]: ComponentToken };
 }
 
@@ -146,5 +163,9 @@ export function resolveRef(
     if (current == null || typeof current !== 'object') return null;
     current = current[segment];
   }
-  return typeof current === 'string' ? current : null;
+  if (typeof current === 'string') return current;
+  if (typeof current === 'number') return String(current);
+  // For object tokens (e.g. motion.micro), return JSON representation
+  if (typeof current === 'object' && current !== null) return JSON.stringify(current);
+  return null;
 }

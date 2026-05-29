@@ -24,13 +24,14 @@ COMMANDS
   spec    Print the Physics Engine specification
 
 OPTIONS
-  --format  Output format (json, tailwind, dtcg)  [default: json]
+  --format  Output format (json, tailwind, dtcg, swiftui)  [default: json]
   --help    Show this help message
 
 EXAMPLES
   npx @trubnikov/physics-engine lint DESIGN.md
   npx @trubnikov/physics-engine export --format tailwind DESIGN.md
   npx @trubnikov/physics-engine export --format dtcg DESIGN.md
+  npx @trubnikov/physics-engine export --format swiftui DESIGN.md
   npx @trubnikov/physics-engine spec
 `;
 

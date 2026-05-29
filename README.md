@@ -2,7 +2,7 @@
 
 > A generative design system based on physical laws, not static values.
 
-Most design systems are dictionaries — you look up a value and apply it. Physics Engine is different. Every dimension, color, and motion is **calculated from first principles**. There are no magic numbers.
+Most design systems are dictionaries — you look up a value and apply it. Physics Engine is different. Every dimension, color, and motion is **derived from first principles**. There are no magic numbers.
 
 ```bash
 npx @trubnikov/physics-engine lint DESIGN.md
@@ -23,7 +23,7 @@ The agent never needs to guess. It derives the right value from the law.
 
 ## DESIGN.md Format
 
-Physics Engine uses the [DESIGN.md](https://github.com/trubnikov/design.md) format — YAML front matter for machine-readable tokens, markdown prose for the rationale.
+Physics Engine uses the [DESIGN.md](https://github.com/google-labs-code/design.md) format — YAML front matter for machine-readable tokens, markdown prose for the rationale.
 
 ```md
 ---
@@ -35,20 +35,25 @@ colors:
 spacing:
   compact: "8px"        # 2× Base Unit
   optimal: "16px"       # 4× Base Unit — most common value
+motion:
+  micro:
+    type: spring
+    mass: 0.5
+    stiffness: 500
+    damping: 25
 components:
   button-primary:
     backgroundColor: "{colors.kinetic}"
     textColor:       "{colors.kinetic-text}"
     height:          "44px"   # Fitts Law minimum
+    motion:          "{motion.micro}"
 ---
 
 ## Overview
 A generative system where every value is derived, not chosen.
-...
----
 ```
 
-An AI agent that reads this file will produce a UI where primary buttons glow at `#3B82F6`, all spacing is divisible by 4, and interactive elements never drop below the 44px touch minimum — without you telling it any of that explicitly.
+An AI agent that reads this file will produce a UI where primary buttons glow at `#3B82F6`, all spacing is divisible by 4, interactive elements never drop below the 44px touch minimum, and animations use calibrated spring physics — without you telling it any of that explicitly.
 
 ---
 
@@ -86,14 +91,21 @@ This formula prevents two failure states: over-rounding a small element into an 
 
 ### Kinematics (Spring Physics)
 
-No `ease-in-out`. No `linear`. Physics Engine uses **spring presets**:
+No `ease-in-out`. No `linear`. Physics Engine uses **spring presets** defined as machine-readable tokens:
 
-```ts
-// Micro-interactions (buttons, toggles, checkboxes)
-{ type: "spring", mass: 0.5, stiffness: 500, damping: 25 }
-
-// Macro-topology (modals, sidebars, drawers)
-{ type: "spring", mass: 1.0, stiffness: 250, damping: 30 }
+```yaml
+motion:
+  micro:                          # Buttons, toggles, checkboxes
+    type: spring
+    mass: 0.5
+    stiffness: 500
+    damping: 25
+  macro:                          # Modals, sidebars, drawers
+    type: spring
+    mass: 1.0
+    stiffness: 250
+    damping: 30
+  tap-scale: 0.96
 ```
 
 State transitions follow energy laws:
@@ -113,8 +125,8 @@ State transitions follow energy laws:
 ### Install
 
 ```bash
-npm install @trubnikov/physics-engine
-# or run directly:
+npm install -g @trubnikov/physics-engine
+# or run without installing:
 npx @trubnikov/physics-engine lint DESIGN.md
 ```
 
@@ -135,7 +147,7 @@ npx @trubnikov/physics-engine lint DESIGN.md
     },
     {
       "rule": "fitts-law",
-      "severity": "info", 
+      "severity": "info",
       "path": "components.button-primary",
       "message": "height 44px meets Fitts Law minimum."
     }
@@ -150,10 +162,13 @@ Exit code `1` if errors are found.
 
 ```bash
 # Tailwind theme config
-npx @trubnikov/physics-engine export --format tailwind DESIGN.md > tailwind.theme.json
+npx @trubnikov/physics-engine export --format tailwind DESIGN.md > tailwind.config.js
 
 # W3C Design Token Format (DTCG)
-npx @trubnikov/physics-engine export --format dtcg DESIGN.md > tokens.json
+npx @trubnikov/physics-engine export --format dtcg DESIGN.md > design_tokens.json
+
+# SwiftUI Design System
+npx @trubnikov/physics-engine export --format swiftui DESIGN.md > DesignSystem.swift
 ```
 
 ### `spec` — Print the specification
@@ -172,23 +187,24 @@ import { lint } from '@trubnikov/physics-engine/linter';
 import { exportTokens } from '@trubnikov/physics-engine/exporter';
 
 const report = lint(designMdString);
-console.log(report.findings);    // Finding[]
-console.log(report.summary);     // { errors, warnings, info }
+console.log(report.findings);     // Finding[]
+console.log(report.summary);      // { errors, warnings, info }
 console.log(report.designSystem); // Parsed DesignSystem
 
 const tailwind = exportTokens(designMdString, 'tailwind');
-const dtcg = exportTokens(designMdString, 'dtcg');
+const dtcg     = exportTokens(designMdString, 'dtcg');
+const swiftui  = exportTokens(designMdString, 'swiftui');
 ```
 
 ---
 
 ## Generating UI with AI
 
-Drop the `DESIGN.md` file (or the output of `npx @trubnikov/physics-engine spec`) into your AI agent's context. The agent now has everything it needs to generate correct, physics-consistent UI.
+Drop `DESIGN.md` into your AI agent's context. The agent now has everything it needs to generate correct, physics-consistent UI.
 
-**Prompt example:**
+**Prompt:**
 ```
-Build a login form.
+Build a login form using DESIGN.md.
 ```
 
 **What the agent derives — without being told:**
@@ -196,8 +212,9 @@ Build a login form.
 - Focus state elevates to Level 2.5 (`#2A2A30`)
 - Submit button at Level 3 (`#3B82F6`) with glow emission
 - All padding multiples of 4px
-- Spring physics for all transitions
+- Spring physics (`mass: 0.5, stiffness: 500, damping: 25`) for all transitions
 - ARIA labels on all fields
+- Minimum 44px tap targets on all interactive elements
 
 ---
 
@@ -210,39 +227,73 @@ Build a login form.
 | `contrast-ratio` | warning | WCAG AA minimum 4.5:1 for text/background pairs |
 | `orphaned-tokens` | warning | Defined colors should be referenced by components |
 | `fitts-law` | error | Interactive elements must be ≥ 44×44px |
+| `energy-conservation` | error | Kinetic color must contrast against Void background |
+| `nested-radius-law` | error | Outer radius must be ≥ padding |
 | `token-summary` | info | Count of tokens in each section |
 | `missing-typography` | warning | Typography tokens should exist alongside colors |
+
+---
+
+## Examples
+
+Three reference implementations — each a complete product design system derived from Physics Engine laws:
+
+| Example | Theme | Demonstrates |
+|---------|-------|--------------|
+| [`dark-command`](examples/dark-command/) | AI chat / dev console | Energy levels, dual typography, motion layer |
+| [`kinetic-commerce`](examples/kinetic-commerce/) | E-commerce product page | Single kinetic focal point, success state physics |
+| [`calm-focus`](examples/calm-focus/) | Productivity / notes | Physics of restraint, prose typography |
+
+Each example includes `DESIGN.md`, `design_tokens.json`, `tailwind.config.js`, and `README.md`.
 
 ---
 
 ## Project Structure
 
 ```
-physics-engine/
-├── DESIGN.md                    ← The design system (start here)
+design-physics-engine/
+├── DESIGN.md              ← The design system spec (start here)
 ├── src/
-│   ├── design-physics-engine.ts ← TypeScript engine (runtime)
-│   ├── cli.ts                   ← CLI entry point
-│   ├── lint.ts                  ← Linter implementation
-│   ├── export.ts                ← Export to Tailwind / DTCG
-│   └── parse.ts                 ← DESIGN.md parser
+│   ├── cli.ts             ← CLI entry point
+│   ├── lint.ts            ← Linter (9 rules)
+│   ├── export.ts          ← Export to Tailwind / DTCG / SwiftUI
+│   └── parse.ts           ← DESIGN.md parser
+├── examples/
+│   ├── dark-command/      ← AI chat interface example
+│   ├── kinetic-commerce/  ← E-commerce example
+│   └── calm-focus/        ← Productivity app example
 └── docs/
-    └── spec.md                  ← Full specification
+    └── spec.md            ← Full specification
 ```
 
 ---
 
 ## Compatibility
 
-Physics Engine's `DESIGN.md` format is compatible with and extends `@google/design.md`. You can lint with either tool:
+Physics Engine's `DESIGN.md` format is compatible with and extends [`@google-labs-code/design.md`](https://github.com/google-labs-code/design.md). Any valid Physics Engine file is a valid `@google-labs-code/design.md` file.
+
+Physics Engine adds:
+- `motion` token section (spring physics presets) — absent from Google's spec
+- `energy-conservation` and `nested-radius-law` linting rules
+- `fitts-law` linting rule
+- Energy Level semantic naming convention
+- SwiftUI export target
 
 ```bash
-npx @google/design.md lint DESIGN.md        # Google's linter
-npx @trubnikov/physics-engine lint DESIGN.md # Physics Engine linter (adds Fitts Law, kinematics checks)
+npx @google-labs-code/design.md lint DESIGN.md        # Google's linter
+npx @trubnikov/physics-engine lint DESIGN.md           # Physics Engine linter (stricter + motion)
 ```
+
+---
+
+## Roadmap
+
+- **v1.1** — Motion token validation in linter + Framer Motion code generation
+- **v1.2** — OKLCH color space (`L` axis maps directly to Energy Levels)
+- **v2.0** — VS Code extension (live linting) · Figma Variables sync
 
 ---
 
 ## License
 
-MIT © [Dima Trubnikov](https://github.com/trubnikov)
+MIT ©2026 [Dima Trubnikov](https://github.com/trubnikov)

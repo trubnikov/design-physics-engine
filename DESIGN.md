@@ -50,6 +50,18 @@ spacing:
 rounded:
   dynamic: "min(12px, calc(height / 2))"
   surface: "16px"
+motion:
+  micro:
+    type: spring
+    mass: 0.5
+    stiffness: 500
+    damping: 25
+  macro:
+    type: spring
+    mass: 1.0
+    stiffness: 250
+    damping: 30
+  tap-scale: 0.96
 components:
   button-primary:
     backgroundColor: "{colors.kinetic}"
@@ -57,6 +69,7 @@ components:
     rounded:         "{rounded.dynamic}"
     padding:         "{spacing.optimal}"
     height:          "44px"
+    motion:          "{motion.micro}"
   button-primary-hover:
     backgroundColor: "#2563EB"
   button-secondary:

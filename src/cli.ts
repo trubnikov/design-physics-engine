@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Physics Engine CLI
- * npx @trubnikov/physics-engine <command> [options] [file]
+ * npx @dimkant/physics-engine <command> [options] [file]
  */
 
 import { readFileSync } from 'fs';
@@ -15,8 +15,8 @@ Physics Engine — Generative Design System CLI
 Version ${SPEC_VERSION}
 
 USAGE
-  npx @trubnikov/physics-engine <command> [options] <file>
-  cat DESIGN.md | npx @trubnikov/physics-engine <command> -
+  npx @dimkant/physics-engine <command> [options] <file>
+  cat DESIGN.md | npx @dimkant/physics-engine <command> -
 
 COMMANDS
   lint    Validate a DESIGN.md file
@@ -28,11 +28,11 @@ OPTIONS
   --help    Show this help message
 
 EXAMPLES
-  npx @trubnikov/physics-engine lint DESIGN.md
-  npx @trubnikov/physics-engine export --format tailwind DESIGN.md
-  npx @trubnikov/physics-engine export --format dtcg DESIGN.md
-  npx @trubnikov/physics-engine export --format swiftui DESIGN.md
-  npx @trubnikov/physics-engine spec
+  npx @dimkant/physics-engine lint DESIGN.md
+  npx @dimkant/physics-engine export --format tailwind DESIGN.md
+  npx @dimkant/physics-engine export --format dtcg DESIGN.md
+  npx @dimkant/physics-engine export --format swiftui DESIGN.md
+  npx @dimkant/physics-engine spec
 `;
 
 const SPEC = `

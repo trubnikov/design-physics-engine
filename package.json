@@ -1,12 +1,12 @@
 {
   "name": "@dimkant/physics-engine",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A generative design system based on physical laws, not static values. Every dimension, color, and motion is derived — never hardcoded.",
   "type": "module",
   "main": "dist/cli.js",
   "types": "dist/cli.d.ts",
   "bin": {
-    "physics-engine": "dist/cli.js"
+    "physics-engine": "./dist/cli.js"
   },
   "scripts": {
     "build": "tsc",

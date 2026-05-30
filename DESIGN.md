@@ -49,7 +49,7 @@ spacing:
   macro:   "48px"
 rounded:
   dynamic: "min(12px, calc(height / 2))"
-  surface: "16px"
+  surface: "32px"
 motion:
   micro:
     type: spring
@@ -103,7 +103,7 @@ components:
     backgroundColor: "{colors.surface}"
     textColor:       "{colors.surface-text}"
     rounded:         "{rounded.surface}"
-    padding:         "{spacing.macro}"
+    padding:         "{spacing.loose}"
 ---
 
 ## Overview

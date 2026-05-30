@@ -27,10 +27,10 @@ spacing:
   optimal: "16px"
   loose: "24px"
   macro: "48px"
-  prose: "40px"
+  prose: "32px"
 rounded:
   dynamic: "min(12px, calc(height / 2))"
-  surface: "16px"
+  surface: "40px"
   tag: "6px"
 typography:
   display:

@@ -1,15 +1,17 @@
-# Physics Engine Specification v1.0
+# Physics Engine Specification v1.1
 
 ## Overview
 
-The Physics Engine specification defines a format for describing a generative design system to AI coding agents. A system built on this spec does not store static values — it encodes physical laws from which all values are derived.
+Physics Engine is a structured dark UI design system with a built-in linter and multi-target export. It provides a named token vocabulary, geometric and accessibility enforcement rules, and export targets for Tailwind CSS, W3C DTCG, and SwiftUI.
+
+Tokens are hand-curated. The value is in their semantic naming (what a color means, not just what it is) and in the linter rules that enforce correctness automatically.
 
 ## File Format
 
 A `DESIGN.md` file has two layers:
 
-1. **YAML front matter** — Machine-readable design tokens, delimited by `---` fences at the top of the file.
-2. **Markdown body** — Human-readable design rationale organized into `##` sections.
+1. **YAML front matter** — machine-readable design tokens, delimited by `---` fences.
+2. **Markdown body** — human-readable design rationale in `##` sections.
 
 The tokens are normative. The prose explains why they exist.
 
@@ -32,6 +34,13 @@ spacing:
   compact | optimal | loose | macro: <dimension>
 rounded:
   dynamic | surface | <custom>: <dimension | formula>
+motion:
+  micro | macro:
+    type: spring
+    mass: <number>
+    stiffness: <number>
+    damping: <number>
+  tap-scale: <number>
 components:
   <component-name>:
     backgroundColor: <color | token-ref>
@@ -40,6 +49,7 @@ components:
     padding: <dimension | token-ref>
     height: <dimension>
     width: <dimension>
+    motion: <token-ref>
 ```
 
 ## Token Types
@@ -52,96 +62,142 @@ components:
 
 ## Energy Level System
 
-The Energy Level system is the Physics Engine's primary contribution to the design token model. It replaces flat color naming with a physics metaphor.
+The Energy Level system is Physics Engine's color naming convention. It describes semantic purpose, not just visual value. This helps AI agents know when to use each color.
 
 | Level | Name | Value | Use |
 |-------|------|-------|-----|
-| 0 | Void | `#050505` | Background universe, zero energy |
-| 1 | Surface | `#111113` | Cards, panels, low-energy containers |
+| 0 | Void | `#050505` | Background |
+| 1 | Surface | `#111113` | Cards, panels, containers |
 | 2 | Interactive | `#1F1F24` | Idle inputs, secondary controls |
-| 2.5 | Hover | `#2A2A30` | Energy elevation on pointer hover |
-| 3 | Kinetic Peak | `#3B82F6` | Primary actions, maximum energy |
-| — | Destructive | `#EF4444` | Danger spectrum, follows Level 3 rules |
+| 2.5 | Hover | `#2A2A30` | Energy elevation on hover |
+| 3 | Kinetic | `#3B82F6` | Primary actions |
+| — | Destructive | `#EF4444` | Danger actions |
+| — | Success | `#22C55E` | Confirmation, completion |
+| — | Warning | `#F59E0B` | Non-blocking alerts |
 
-**Emission:** Elements at Level 3 emit glow as a physical side effect: `box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25)`.
+**Emission:** Level 3 elements emit glow: `box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25)`.
 
-**State transitions follow energy laws:**
-- Hover: Elevate by +0.5
-- Press: Compress to `scale(0.96)`, elevate by +1
+**State transitions:**
+- Hover: Energy +0.5
+- Press: `scale(0.96)` + Energy +1
+
+## Typography Scale
+
+Scale ratio: **1.25 (Major Third)**. Base: 16px (1rem).
+
+| Token | Size | Weight | Use |
+|-------|------|--------|-----|
+| `display` / `h1` | 31px | 700 | Hero text, page titles |
+| `h2` | 25px | 600 | Section headers |
+| `h3` | 20px | 500 | Card titles, dialog headers |
+| `body` | 16px | 400 | Paragraph text |
+| `label` | 14px | 500 | Button text, form labels |
+| `caption` | 12px | 400 | Metadata, timestamps, helper text |
+| `code` | 14px | 400 | Code blocks, file paths (monospace) |
 
 ## Spatial Mathematics
 
 All dimensions derive from **Base Unit: 4px**.
 
-| Scale Name | Multiplier | Value | Use |
-|------------|-----------|-------|-----|
-| Compact | 2× | 8px | Icon-to-text gaps, internal component spacing |
-| Optimal | 4× | 16px | Standard component padding (most common) |
-| Loose | 6× | 24px | Spacing between distinct UI sections |
-| Macro | 12× | 48px | Modal and overlay internal padding |
+| Scale | Multiplier | Value | Use |
+|-------|-----------|-------|-----|
+| Compact | 2× | 8px | Icon-to-text gaps, internal spacing |
+| Optimal | 4× | 16px | Standard component padding |
+| Loose | 6× | 24px | Between UI sections |
+| Macro | 12× | 48px | Layout gaps, overlay padding |
 
-**Axiom:** No dimension in the system may exist outside a Base Unit multiple. Arbitrary values are forbidden.
+Note: Multipliers are 2×, 4×, 6×, 12× — pragmatic values covering four density needs, not a geometric sequence.
 
 ## Topology Collapse (Border Radius)
 
 ```
 Dynamic Radius = min(12px, height / 2)
-Surface Radius = 16px
+Surface Radius = 32px
 ```
 
-**Dynamic Radius** applies to interactive elements with a known, fixed height (buttons, inputs, badges). The formula prevents:
-- Over-rounding: a 24px element with `12px` radius would become a pill — the formula caps at `12px`
-- Under-rounding: a 48px element with just `4px` radius looks unintentionally sharp — the formula produces `16px`
+**Dynamic Radius** — for interactive elements with known fixed height.
+**Surface Radius** — for containers (cards, modals) with variable height. 32px ensures it always exceeds typical padding values (satisfies nested radius law).
 
-**Surface Radius** applies to containers (cards, modals, dialogs) whose height is variable or unknown at design time.
+**Nested Radius Law:** Outer radius must be ≥ inner padding. Otherwise the inner radius would be negative — a geometric impossibility.
 
 ## Kinematics
 
 All transitions use spring physics. Linear and cubic-bezier transitions are forbidden.
 
-### Preset 1 — Micro-interactions
-
-For: buttons, toggles, checkboxes, chips, icon buttons.
-
+### Micro-interactions (buttons, toggles, chips)
 ```json
 { "type": "spring", "mass": 0.5, "stiffness": 500, "damping": 25 }
 ```
-
 Press state: `transform: scale(0.96)`
 
-### Preset 2 — Macro-topology
-
-For: modals, sidebars, drawers, accordion panels, sheets.
-
+### Macro-topology (modals, sidebars, drawers)
 ```json
 { "type": "spring", "mass": 1.0, "stiffness": 250, "damping": 30 }
 ```
 
+## Component States
+
+Every interactive component must define these states:
+
+| State | Visual rule |
+|-------|-------------|
+| Idle | Base energy level |
+| Hover | Energy +0.5 (background brightens) |
+| Press | `scale(0.96)` + Energy +1 |
+| Focus | 2px Kinetic ring, 2px offset |
+| Disabled | Surface energy, muted text, no interaction response |
+| Error | Destructive border or background |
+| Loading | Surface background, muted text, skeleton or spinner |
+| Success | Success color, confirmation feedback |
+
+## Data Visualization Palette
+
+Six perceptually distinct hues for charts and multi-series data:
+
+| Token | Value | Use |
+|-------|-------|-----|
+| `data-1` | `#3B82F6` | Primary series (matches kinetic) |
+| `data-2` | `#8B5CF6` | Purple |
+| `data-3` | `#10B981` | Green |
+| `data-4` | `#F59E0B` | Amber (matches warning) |
+| `data-5` | `#EF4444` | Red (matches destructive — negative values) |
+| `data-6` | `#06B6D4` | Cyan |
+
 ## Accessibility
 
-### Fitts Law Minimum
-
-Every interactive element (button, input, toggle, link) must have a minimum touch target of **44×44px**. This applies even if the visible element is smaller — use padding to extend the hit area.
+### Fitts Law
+Every interactive element must have a minimum touch target of **44×44px**.
 
 ### Focus Ring
-
-Focus outlines must never be removed without replacement. The replacement is a 2px solid ring in the Kinetic color, offset 2px from the element's edge.
-
 ```css
 outline: 2px solid #3B82F6;
 outline-offset: 2px;
 ```
+Never remove without replacement.
+
+### Contrast
+Text on backgrounds must meet WCAG AA minimum 4.5:1 for normal text, 3:1 for large text.
 
 ### ARIA
+Every interactive element must carry semantic HTML and `aria-*` attributes.
 
-Every interactive element must carry:
-- Semantic HTML (`<button>`, `<a>`, `<input>`, `<dialog>`)
-- Relevant `aria-*` attributes (`aria-label`, `aria-expanded`, `aria-disabled`, etc.)
-- `role` attribute where semantic HTML is insufficient
+## Linting Rules
+
+| Rule | Severity | Description |
+|------|----------|-------------|
+| `broken-ref` | error | Token references must resolve to defined tokens |
+| `missing-primary` | warning | A `kinetic` or `primary` color must be defined |
+| `contrast-ratio` | warning/error | WCAG AA minimum for text/background pairs |
+| `orphaned-tokens` | warning | Every color should be used by at least one component |
+| `fitts-law` | error | Interactive components must declare `height ≥ 44px` |
+| `energy-conservation` | error | Kinetic color must contrast against Void background |
+| `nested-radius-law` | error | Outer radius must be ≥ component padding |
+| `token-summary` | info | Count of tokens per section |
+| `missing-typography` | warning | Typography must exist alongside colors |
 
 ## Section Order
 
-Sections in the markdown body use `##` headings and should appear in this order:
+Markdown body sections should appear in this order:
 
 | # | Section |
 |---|---------|
@@ -154,32 +210,23 @@ Sections in the markdown body use `##` headings and should appear in this order:
 | 7 | Components |
 | 8 | Do's and Don'ts |
 
-## Linting Rules
-
-| Rule | Severity | Description |
-|------|----------|-------------|
-| `broken-ref` | error | Token references must resolve to defined tokens |
-| `missing-primary` | warning | A `kinetic` or `primary` color must be defined |
-| `contrast-ratio` | warning | WCAG AA minimum 4.5:1 for all text/background pairs |
-| `orphaned-tokens` | warning | Every defined color token should be used by at least one component |
-| `fitts-law` | error | Interactive components must declare `height ≥ 44px` |
-| `token-summary` | info | Summary count of tokens per section |
-| `missing-typography` | warning | Typography tokens must exist if colors are defined |
-
 ## Compatibility
 
-The Physics Engine `DESIGN.md` format is a strict extension of the `@google/design.md` format. Any valid Physics Engine file is a valid `@google/design.md` file. Physics Engine adds:
-
-- Energy Level semantic naming convention for color tokens
-- `fitts-law` linting rule
-- Kinematics specification (spring physics presets)
-- Topology Collapse formula for border radius
+Physics Engine DESIGN.md files are compatible with `@google-labs-code/design.md`. Physics Engine adds: motion tokens, additional linting rules (Fitts Law, energy-conservation, nested-radius-law), SwiftUI export, and semantic Energy Level naming.
 
 ## Changelog
 
+### v1.1 (2026)
+- Added: `success`, `warning`, `data-1`–`data-6` color tokens
+- Added: `label`, `caption`, `code` typography tokens
+- Added: disabled, error, loading, success component states
+- Added: data visualization palette
+- Fixed: surface radius prose/token inconsistency (now consistently 32px)
+- Fixed: removed incorrect claim that all values are "calculated from first principles"
+- Updated: description now accurately reflects the system
+
 ### v1.0 (2026)
 - Initial release
-- Full YAML token schema
-- CLI: lint, export, spec
-- Tailwind and DTCG export targets
-- Seven linting rules including WCAG AA contrast check and Fitts Law
+- Energy Level color system
+- CLI: lint, export (tailwind, dtcg, swiftui), spec
+- Nine linting rules including WCAG AA and Fitts Law

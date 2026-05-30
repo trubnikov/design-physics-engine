@@ -29,7 +29,7 @@ spacing:
 rounded:
   dynamic: "min(12px, calc(height / 2))"
   surface: "16px"
-  code: "8px"
+  code: "20px"
 typography:
   display:
     fontFamily: Inter

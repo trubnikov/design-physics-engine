@@ -1,12 +1,13 @@
 ---
 name: Physics Engine
-version: "1.0"
-description: "A generative design system based on physical laws, not static values. Every dimension, color, and motion is calculated — never hardcoded."
+version: "1.1"
+description: "A structured dark UI design system with named energy levels, spring kinematics, and a built-in linter. Tokens are hand-curated — the value is in their naming, relationships, and enforcement rules."
 colors:
   void:               "#050505"
   void-text:          "#71717A"
   surface:            "#111113"
   surface-text:       "#E4E4E7"
+  surface-text-muted: "#71717A"
   surface-border:     "rgba(255, 255, 255, 0.08)"
   interactive:        "#1F1F24"
   interactive-hover:  "#2A2A30"
@@ -17,31 +18,66 @@ colors:
   destructive:        "#EF4444"
   destructive-text:   "#FFFFFF"
   destructive-glow:   "rgba(239, 68, 68, 0.25)"
+  success:            "#22C55E"
+  success-text:       "#052e16"
+  success-glow:       "rgba(34, 197, 94, 0.25)"
+  warning:            "#F59E0B"
+  warning-text:       "#000000"
+  data-1:             "#3B82F6"
+  data-2:             "#8B5CF6"
+  data-3:             "#10B981"
+  data-4:             "#F59E0B"
+  data-5:             "#EF4444"
+  data-6:             "#06B6D4"
 typography:
-  body:
+  display:
     fontFamily: "Inter, system-ui, sans-serif"
-    fontSize: "1rem"
-    fontWeight: 400
-    lineHeight: 1.6
-    letterSpacing: "normal"
-  h3:
-    fontFamily: "Inter, system-ui, sans-serif"
-    fontSize: "1.25rem"
-    fontWeight: 500
-    lineHeight: 1.4
-    letterSpacing: "-0.01em"
-  h2:
-    fontFamily: "Inter, system-ui, sans-serif"
-    fontSize: "1.5625rem"
-    fontWeight: 600
-    lineHeight: 1.2
-    letterSpacing: "-0.02em"
+    fontSize: "1.953rem"
+    fontWeight: 700
+    lineHeight: 1.1
+    letterSpacing: "-0.03em"
   h1:
     fontFamily: "Inter, system-ui, sans-serif"
     fontSize: "1.953rem"
     fontWeight: 700
     lineHeight: 1.1
     letterSpacing: "-0.03em"
+  h2:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "1.5625rem"
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: "-0.02em"
+  h3:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "1.25rem"
+    fontWeight: 500
+    lineHeight: 1.4
+    letterSpacing: "-0.01em"
+  body:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "1rem"
+    fontWeight: 400
+    lineHeight: 1.6
+    letterSpacing: "normal"
+  label:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "0.875rem"
+    fontWeight: 500
+    lineHeight: 1.4
+    letterSpacing: "0.01em"
+  caption:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 400
+    lineHeight: 1.4
+    letterSpacing: "0.02em"
+  code:
+    fontFamily: "JetBrains Mono, Fira Code, monospace"
+    fontSize: "0.875rem"
+    fontWeight: 400
+    lineHeight: 1.6
+    letterSpacing: "0"
 spacing:
   compact: "8px"
   optimal: "16px"
@@ -72,6 +108,12 @@ components:
     motion:          "{motion.micro}"
   button-primary-hover:
     backgroundColor: "#2563EB"
+  button-primary-disabled:
+    backgroundColor: "{colors.interactive}"
+    textColor:       "{colors.surface-text-muted}"
+    rounded:         "{rounded.dynamic}"
+    padding:         "{spacing.optimal}"
+    height:          "44px"
   button-secondary:
     backgroundColor: "{colors.interactive}"
     textColor:       "{colors.interactive-text}"
@@ -86,6 +128,12 @@ components:
     rounded:         "{rounded.dynamic}"
     padding:         "{spacing.optimal}"
     height:          "44px"
+  button-success:
+    backgroundColor: "{colors.success}"
+    textColor:       "{colors.success-text}"
+    rounded:         "{rounded.dynamic}"
+    padding:         "{spacing.optimal}"
+    height:          "44px"
   input:
     backgroundColor: "{colors.interactive}"
     textColor:       "{colors.interactive-text}"
@@ -94,9 +142,26 @@ components:
     height:          "44px"
   input-focus:
     backgroundColor: "{colors.interactive-hover}"
+  input-error:
+    backgroundColor: "{colors.interactive}"
+    textColor:       "{colors.interactive-text}"
+    rounded:         "{rounded.dynamic}"
+    padding:         "{spacing.optimal}"
+    height:          "44px"
+  input-disabled:
+    backgroundColor: "{colors.surface}"
+    textColor:       "{colors.surface-text-muted}"
+    rounded:         "{rounded.dynamic}"
+    padding:         "{spacing.optimal}"
+    height:          "44px"
   card:
     backgroundColor: "{colors.surface}"
     textColor:       "{colors.surface-text}"
+    rounded:         "{rounded.surface}"
+    padding:         "{spacing.loose}"
+  card-loading:
+    backgroundColor: "{colors.surface}"
+    textColor:       "{colors.surface-text-muted}"
     rounded:         "{rounded.surface}"
     padding:         "{spacing.loose}"
   modal:
@@ -104,94 +169,143 @@ components:
     textColor:       "{colors.surface-text}"
     rounded:         "{rounded.surface}"
     padding:         "{spacing.loose}"
+  badge-success:
+    backgroundColor: "{colors.success}"
+    textColor:       "{colors.success-text}"
+    rounded:         "{rounded.dynamic}"
+    padding:         "4px 10px"
+  badge-error:
+    backgroundColor: "{colors.destructive}"
+    textColor:       "{colors.destructive-text}"
+    rounded:         "{rounded.dynamic}"
+    padding:         "4px 10px"
+  badge-warning:
+    backgroundColor: "{colors.warning}"
+    textColor:       "{colors.warning-text}"
+    rounded:         "{rounded.dynamic}"
+    padding:         "4px 10px"
+  toast-success:
+    backgroundColor: "{colors.success}"
+    textColor:       "{colors.success-text}"
+    rounded:         "{rounded.dynamic}"
+    padding:         "{spacing.optimal}"
+  toast-error:
+    backgroundColor: "{colors.destructive}"
+    textColor:       "{colors.destructive-text}"
+    rounded:         "{rounded.dynamic}"
+    padding:         "{spacing.optimal}"
 ---
 
 ## Overview
 
-Physics Engine is a **generative design system** built on a single axiom: UI elements obey physical laws, not designer whims. Every value is calculated from first principles. There are no magic numbers.
+Physics Engine is a **structured dark UI design system** for AI-assisted product development. It provides a named token vocabulary, a linter that enforces geometric and accessibility constraints, and export targets for Tailwind, DTCG, and SwiftUI.
 
-The system operates on the metaphor of **energy** — elements exist at different energy levels, and transitions between states follow the laws of kinematics. A button press is not a CSS state change; it is an energy elevation and a physical compression.
-
-This creates a UI that feels alive without feeling arbitrary. Consistent, predictable, and self-explanatory to any AI agent that reads this file.
+The tokens are hand-curated — the value is not that values are calculated automatically, but that they are **named by intent** (energy levels, kinematics, topology) and **enforced by rules** (Fitts Law, contrast ratios, nested radius law). An AI agent reading this file knows not just what a color is, but what it means and when to use it.
 
 ## Colors
 
-The palette is defined by **Energy Levels** — a z-axis system that describes how much "energy" a surface emits.
+The palette uses an **Energy Level** naming convention — a z-axis metaphor that describes semantic purpose, not just visual value.
 
-- **Void (#050505):** The background universe. Zero energy. Where all UI exists.
-- **Surface (#111113):** Containers, cards, panels. Low-energy surfaces that emerge from the void.
-- **Interactive (#1F1F24):** Idle inputs and secondary buttons. Ready to receive energy.
-- **Interactive Hover (#2A2A30):** Energy elevation +0.5 on hover. A subtle but physical response.
-- **Kinetic (#3B82F6):** Primary actions at peak energy. Emits a glow as a side effect of its energy state.
-- **Destructive (#EF4444):** A separate energy spectrum. Follows Kinetic emission rules but signals danger.
+- **Void (`#050505`):** The background. The lowest energy state.
+- **Surface (`#111113`):** Containers, cards, panels. Slightly elevated from void.
+- **Surface Muted (`#71717A`):** Secondary text. Labels, captions, placeholder text.
+- **Interactive (`#1F1F24`):** Elements that can receive input. Inputs, secondary buttons.
+- **Interactive Hover (`#2A2A30`):** Interactive state after hover. Energy +0.5.
+- **Kinetic (`#3B82F6`):** Primary actions. Maximum intentionality. Emits glow.
+- **Destructive (`#EF4444`):** Danger actions. Follows Kinetic emission rules.
+- **Success (`#22C55E`):** Confirmation, completion, positive states. Follows Kinetic emission rules.
+- **Warning (`#F59E0B`):** Caution, non-blocking alerts. Dark text on warm background.
 
-The glow (`box-shadow`) on Kinetic and Destructive is not a decoration — it is the visual emission of a high-energy state.
+These values are chosen by hand for perceptual balance on dark backgrounds. The naming convention is the system — it tells agents when to use each color, not just what the color is.
+
+### Data Visualization Palette
+
+Six distinct hues for charts, graphs, and multi-series data. Ordered by perceptual distance:
+
+- `data-1` (#3B82F6) — blue (matches kinetic, use for primary series)
+- `data-2` (#8B5CF6) — purple
+- `data-3` (#10B981) — green
+- `data-4` (#F59E0B) — amber
+- `data-5` (#EF4444) — red (matches destructive — use for negative values)
+- `data-6` (#06B6D4) — cyan
 
 ## Typography
 
-Scale ratio: **1.25 (Major Third)**. Base: 16px. Every size is derived mathematically — no arbitrary intermediate sizes.
+Scale ratio: **1.25 (Major Third)**. Base: 16px (1rem).
 
-The scale creates a natural hierarchy where each heading level feels categorically different from the one below it, not just slightly larger.
+| Token | Size | Weight | Use |
+|-------|------|--------|-----|
+| `display` / `h1` | 31px | 700 | Hero text, page titles |
+| `h2` | 25px | 600 | Section headers |
+| `h3` | 20px | 500 | Card titles, dialog headers |
+| `body` | 16px | 400 | Paragraph text, descriptions |
+| `label` | 14px | 500 | Button text, form labels, tab text |
+| `caption` | 12px | 400 | Metadata, timestamps, helper text |
+| `code` | 14px | 400 | Monospace — code blocks, file paths |
 
-Negative letter-spacing on headings compensates for optical spread at large sizes — a physical correction for how human vision perceives letterforms.
+Negative letter-spacing on headings (−0.03em to −0.01em) compensates for optical spread at large sizes. Positive tracking on caption (0.02em) improves legibility at small sizes.
 
 ## Layout
 
-All dimensions derive from a single **Base Unit: 4px**.
+All spacing derives from a **Base Unit of 4px**.
 
-- `Compact (8px)` — internal spacing within components (icon to text gap).
-- `Optimal (16px)` — standard component padding. The most common value.
-- `Loose (24px)` — spacing between distinct UI sections.
-- `Macro (48px)` — modal and overlay internal padding.
+- `Compact (8px = 2×)` — gaps between icon and text, internal chip padding.
+- `Optimal (16px = 4×)` — standard component padding. The most-used value.
+- `Loose (24px = 6×)` — separation between distinct UI sections.
+- `Macro (48px = 12×)` — large layout gaps, overlay internal padding.
 
-**Topology Collapse** governs border radius on interactive elements: `min(12px, height/2)`. This formula prevents two failure states — over-rounding a small element into a pill, and under-rounding a tall element into a rectangle. Radius is a function of the element's own geometry.
-
-Cards and modals use a fixed `Surface Radius (16px)` because their height is variable and the formula would produce inconsistent results at large sizes.
+Note: The multipliers are 2×, 4×, 6×, 12× — not a geometric sequence. These are pragmatic values that cover the four common density needs. Macro skips ahead to 12× because 8× (32px) and 10× (40px) are rarely useful at the macro level.
 
 ## Elevation & Depth
 
-Elevation in this system is expressed through **energy level**, not drop shadows. A higher-energy element does not cast a shadow — it emits light.
+Elevation is expressed through **energy level color**, not drop shadows. A surface at Level 1 (`#111113`) sits above the void (`#050505`) because it is brighter, not because it casts a shadow.
 
-The glow values are calibrated so they are perceptible but not decorative. They signal state, not style.
-
-Z-index follows energy level numerically: Void = 0, Surface = 1, Modal = 10. Interactive elements never occlude higher-energy surfaces.
+The glow (`box-shadow`) on Kinetic and Destructive elements is not decoration — it is the visual emission of a high-energy state. It signals that something is actionable.
 
 ## Shapes
 
-Shape is governed by the **Topology Collapse formula**. The system has exactly two shape primitives:
+The system has two shape primitives:
 
-1. **Dynamic Radius** — for interactive elements whose height is known at render time.
-2. **Surface Radius** — for containers whose height is variable or unknown.
+**Dynamic Radius:** `min(12px, height / 2)`
+For interactive elements with a known fixed height. At 44px height → 12px radius. At 22px height → 11px radius (pill). The formula prevents over-rounding small elements and under-rounding tall ones.
 
-There is no "slight rounding" or "fully rounded" as arbitrary choices. Shape emerges from geometry.
+**Surface Radius:** `32px`
+For containers (cards, modals) whose height is variable. Fixed at 32px — larger than any expected padding value — to satisfy the nested radius law (outer radius must exceed padding).
 
 ## Components
 
-All components are synthesized, not templated. An AI agent reading this file builds a button by applying:
-`Kinetic background + Optimal padding + Dynamic Radius + Fitts Law minimum + Micro-interaction kinematics + Focus Ring`
+Components are defined by their energy state, not by arbitrary style choices.
 
-### Kinematic States
+### Kinematic States (all interactive elements)
 
-- **Hover:** Energy elevation +0.5 (Interactive → Interactive Hover)
-- **Press:** Scale compression to `0.96` + Energy elevation +1
-- **Focus:** 2px Kinetic-colored ring, offset 2px from element edge
+- **Idle:** Base energy level for that component type.
+- **Hover:** Energy +0.5 (background brightens one step).
+- **Press:** `scale(0.96)` + energy +1. Spring Micro preset.
+- **Focus:** 2px Kinetic ring, 2px offset. Never remove without replacement.
+- **Disabled:** Drop to Surface energy. Muted text. No hover or press response.
+- **Loading:** Surface background + muted text. Skeleton pattern or spinner.
+- **Error:** Destructive border or background. Error message in caption size.
+- **Success:** Success color. Confirmation icon or message.
 
-### Accessibility Bounds
+### Accessibility
 
-- **Fitts Law Minimum:** Every interactive element must have a minimum hitbox of `44×44px`.
-- **Focus Ring:** Never suppress without replacement. Ring color = `{colors.kinetic}`.
-- **ARIA:** All interactive elements must carry semantic HTML and relevant `aria-*` attributes.
+- **Fitts Law:** Every interactive element minimum `44×44px` hitbox.
+- **Focus Ring:** `2px solid {colors.kinetic}`, offset `2px`.
+- **Contrast:** Text on interactive backgrounds ≥ 4.5:1 (WCAG AA).
+- **ARIA:** All interactive elements carry semantic HTML and `aria-*` states.
 
 ## Do's and Don'ts
 
 **Do:**
-- Derive all dimensions from Base Unit multiples.
-- Use Energy Level to determine background color — never pick colors directly.
-- Apply Dynamic Radius to any element with a known, fixed height.
-- Use spring physics for all transitions.
+- Use `surface-text-muted` for secondary text, timestamps, and helper text.
+- Use `caption` (12px) for metadata — never shrink `body` text in-line.
+- Use `data-1` through `data-6` for any chart or multi-series visualization.
+- Use `success` to confirm completed actions, not just `kinetic`.
+- Use `badge-warning` for non-blocking alerts — not destructive.
 
 **Don't:**
-- Use arbitrary pixel values not derivable from Base Unit.
-- Use `ease-in-out` or `linear` CSS transitions — they feel mechanical.
-- Remove focus rings without providing an equivalent.
-- Use Kinetic color for non-primary, non-action elements (it signals high energy).
+- Use `kinetic` for decorative or informational elements — it signals primary action.
+- Remove focus rings. Replace them if needed, never suppress.
+- Use inline arbitrary hex values in components — reference tokens only.
+- Use `ease-in-out` or `linear` transitions — use spring presets.
+- Use `body` (16px) where `label` (14px) or `caption` (12px) is appropriate.

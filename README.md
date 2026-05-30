@@ -2,7 +2,7 @@
 
 > A generative design system based on physical laws, not static values.
 
-Most design systems are dictionaries — you look up a value and apply it. Physics Engine is different. Every dimension, color, and motion is **derived from first principles**. There are no magic numbers.
+Most design systems are dictionaries — you look up a value and apply it. Physics Engine adds two things on top: **semantic naming** (tokens describe intent, not just value) and **enforcement rules** (a linter that validates Fitts Law, WCAG contrast, and geometric consistency). The tokens are hand-curated. The value is in what they mean and what the linter catches.
 
 ```bash
 npx @trubnikov/physics-engine lint DESIGN.md

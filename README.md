@@ -1,12 +1,13 @@
 # ⚡ Physics Engine
 
-> A generative design system based on physical laws, not static values.
+> A structured dark UI design system with semantic token naming, spring kinematics, and a built-in linter.
 
 Most design systems are dictionaries — you look up a value and apply it. Physics Engine adds two things on top: **semantic naming** (tokens describe intent, not just value) and **enforcement rules** (a linter that validates Fitts Law, WCAG contrast, and geometric consistency). The tokens are hand-curated. The value is in what they mean and what the linter catches.
 
 ```bash
-npx @trubnikov/physics-engine lint DESIGN.md
-npx @trubnikov/physics-engine export --format tailwind DESIGN.md
+npx @dimkant/physics-engine lint DESIGN.md
+npx @dimkant/physics-engine export --format tailwind DESIGN.md
+npx @dimkant/physics-engine export --format swiftui DESIGN.md
 ```
 
 ---
@@ -17,7 +18,7 @@ UI elements obey **physical laws**. A button press is not a CSS state change —
 
 This metaphor makes design decisions **self-explanatory** to any AI agent. Instead of "use #3B82F6 for the primary button", you say: "primary actions are at Kinetic Peak (Level 3) and emit glow as a side effect of their energy state."
 
-The agent never needs to guess. It derives the right value from the law.
+The agent knows not just what a color is — but when and why to use it.
 
 ---
 
@@ -27,14 +28,16 @@ Physics Engine uses the [DESIGN.md](https://github.com/google-labs-code/design.m
 
 ```md
 ---
-name: Physics Engine
+name: My App
 colors:
-  void:     "#050505"   # Level 0 — Background universe
+  void:     "#050505"   # Level 0 — Background
   surface:  "#111113"   # Level 1 — Cards, panels
   kinetic:  "#3B82F6"   # Level 3 — Primary actions, emits glow
+  success:  "#22C55E"   # Confirmation, completion
+  warning:  "#F59E0B"   # Non-blocking alerts
 spacing:
   compact: "8px"        # 2× Base Unit
-  optimal: "16px"       # 4× Base Unit — most common value
+  optimal: "16px"       # 4× Base Unit
 motion:
   micro:
     type: spring
@@ -45,15 +48,16 @@ components:
   button-primary:
     backgroundColor: "{colors.kinetic}"
     textColor:       "{colors.kinetic-text}"
-    height:          "44px"   # Fitts Law minimum
+    height:          "44px"
     motion:          "{motion.micro}"
+  button-primary-disabled:
+    backgroundColor: "{colors.interactive}"
+    textColor:       "{colors.surface-text-muted}"
+    height:          "44px"
 ---
-
-## Overview
-A generative system where every value is derived, not chosen.
 ```
 
-An AI agent that reads this file will produce a UI where primary buttons glow at `#3B82F6`, all spacing is divisible by 4, interactive elements never drop below the 44px touch minimum, and animations use calibrated spring physics — without you telling it any of that explicitly.
+An AI agent reading this file knows: the button color, its disabled state, its animation spring parameters, its minimum touch size — without guessing any of it.
 
 ---
 
@@ -61,14 +65,28 @@ An AI agent that reads this file will produce a UI where primary buttons glow at
 
 ### Energy Levels (Color System)
 
-| Level | Name | Material | Use |
-|-------|------|----------|-----|
-| 0 | Void | `#050505` | Background universe |
+| Level | Name | Value | Use |
+|-------|------|-------|-----|
+| 0 | Void | `#050505` | Background |
 | 1 | Surface | `#111113` | Cards, panels, containers |
 | 2 | Interactive | `#1F1F24` | Idle inputs, secondary buttons |
 | 2.5 | Hover | `#2A2A30` | Energy elevation on hover |
-| 3 | Kinetic Peak | `#3B82F6` | Primary actions, emits glow |
-| — | Destructive | `#EF4444` | Danger, follows Level 3 rules |
+| 3 | Kinetic | `#3B82F6` | Primary actions, emits glow |
+| — | Destructive | `#EF4444` | Danger actions |
+| — | Success | `#22C55E` | Confirmation, completion |
+| — | Warning | `#F59E0B` | Non-blocking alerts |
+
+### Typography Scale
+
+| Token | Size | Weight | Use |
+|-------|------|--------|-----|
+| `h1` | 31px | 700 | Page titles |
+| `h2` | 25px | 600 | Section headers |
+| `h3` | 20px | 500 | Card titles |
+| `body` | 16px | 400 | Paragraph text |
+| `label` | 14px | 500 | Button text, form labels |
+| `caption` | 12px | 400 | Metadata, timestamps |
+| `code` | 14px | 400 | Code blocks (monospace) |
 
 ### Spatial Mathematics
 
@@ -78,29 +96,30 @@ All dimensions derive from a single **Base Unit: 4px**.
 Compact  =  2× =  8px  →  icon-to-text gap
 Optimal  =  4× = 16px  →  standard component padding
 Loose    =  6× = 24px  →  section spacing
-Macro    = 12× = 48px  →  modal internal padding
+Macro    = 12× = 48px  →  layout gaps
 ```
 
 ### Topology Collapse (Border Radius)
 
 ```
 Dynamic Radius = min(12px, height / 2)
+Surface Radius = 32px
 ```
 
-This formula prevents two failure states: over-rounding a small element into an unintended pill, and under-rounding a tall element into a rectangle. Radius is a function of the element's geometry, not a designer's choice.
+Radius is a function of geometry, not a designer's choice.
 
 ### Kinematics (Spring Physics)
 
-No `ease-in-out`. No `linear`. Physics Engine uses **spring presets** defined as machine-readable tokens:
+No `ease-in-out`. No `linear`. Physics Engine uses **spring presets** as machine-readable tokens:
 
 ```yaml
 motion:
-  micro:                          # Buttons, toggles, checkboxes
+  micro:                      # Buttons, toggles, chips
     type: spring
     mass: 0.5
     stiffness: 500
     damping: 25
-  macro:                          # Modals, sidebars, drawers
+  macro:                      # Modals, sidebars, drawers
     type: spring
     mass: 1.0
     stiffness: 250
@@ -108,14 +127,15 @@ motion:
   tap-scale: 0.96
 ```
 
-State transitions follow energy laws:
-- **Hover** → Elevate energy +0.5
-- **Press** → Compress to `scale(0.96)`, elevate energy +1
+### Data Visualization
+
+Six perceptually distinct colors for charts and multi-series data:
+`data-1` (#3B82F6) · `data-2` (#8B5CF6) · `data-3` (#10B981) · `data-4` (#F59E0B) · `data-5` (#EF4444) · `data-6` (#06B6D4)
 
 ### Accessibility
 
 - **Fitts Law** — Every interactive element must be at least `44×44px`
-- **Focus Ring** — Never suppress without replacement. Always `2px Kinetic-colored ring`
+- **Focus Ring** — `2px solid {colors.kinetic}`, offset `2px`
 - **ARIA** — All interactive elements carry semantic HTML and `aria-*` states
 
 ---
@@ -125,26 +145,20 @@ State transitions follow energy laws:
 ### Install
 
 ```bash
-npm install -g @trubnikov/physics-engine
+npm install -g @dimkant/physics-engine
 # or run without installing:
-npx @trubnikov/physics-engine lint DESIGN.md
+npx @dimkant/physics-engine lint DESIGN.md
 ```
 
 ### `lint` — Validate your DESIGN.md
 
 ```bash
-npx @trubnikov/physics-engine lint DESIGN.md
+npx @dimkant/physics-engine lint DESIGN.md
 ```
 
 ```json
 {
   "findings": [
-    {
-      "rule": "contrast-ratio",
-      "severity": "info",
-      "path": "components.button-primary",
-      "message": "textColor (#FFFFFF) on backgroundColor (#3B82F6) has contrast ratio 4.51:1 — passes WCAG AA."
-    },
     {
       "rule": "fitts-law",
       "severity": "info",
@@ -162,20 +176,19 @@ Exit code `1` if errors are found.
 
 ```bash
 # Tailwind theme config
-npx @trubnikov/physics-engine export --format tailwind DESIGN.md > tailwind.config.js
+npx @dimkant/physics-engine export --format tailwind DESIGN.md > tailwind.config.js
 
 # W3C Design Token Format (DTCG)
-npx @trubnikov/physics-engine export --format dtcg DESIGN.md > design_tokens.json
+npx @dimkant/physics-engine export --format dtcg DESIGN.md > design_tokens.json
 
 # SwiftUI Design System
-npx @trubnikov/physics-engine export --format swiftui DESIGN.md > DesignSystem.swift
+npx @dimkant/physics-engine export --format swiftui DESIGN.md > DesignSystem.swift
 ```
 
 ### `spec` — Print the specification
 
 ```bash
-npx @trubnikov/physics-engine spec
-npx @trubnikov/physics-engine spec --format json
+npx @dimkant/physics-engine spec
 ```
 
 ---
@@ -183,8 +196,8 @@ npx @trubnikov/physics-engine spec --format json
 ## Programmatic API
 
 ```typescript
-import { lint } from '@trubnikov/physics-engine/linter';
-import { exportTokens } from '@trubnikov/physics-engine/exporter';
+import { lint } from '@dimkant/physics-engine/linter';
+import { exportTokens } from '@dimkant/physics-engine/exporter';
 
 const report = lint(designMdString);
 console.log(report.findings);     // Finding[]
@@ -200,21 +213,20 @@ const swiftui  = exportTokens(designMdString, 'swiftui');
 
 ## Generating UI with AI
 
-Drop `DESIGN.md` into your AI agent's context. The agent now has everything it needs to generate correct, physics-consistent UI.
+Drop `DESIGN.md` into your AI agent's context and ask it to build UI. The agent derives every property from the file — no guessing.
 
 **Prompt:**
 ```
-Build a login form using DESIGN.md.
+Build a login form using this DESIGN.md. Use only values from the file.
 ```
 
-**What the agent derives — without being told:**
+**What the agent knows without being told:**
 - Input backgrounds at Level 2 (`#1F1F24`)
-- Focus state elevates to Level 2.5 (`#2A2A30`)
-- Submit button at Level 3 (`#3B82F6`) with glow emission
+- Focus state: Level 2.5 (`#2A2A30`) + 2px kinetic ring
+- Submit button: Level 3 (`#3B82F6`) + glow + 44px height
 - All padding multiples of 4px
-- Spring physics (`mass: 0.5, stiffness: 500, damping: 25`) for all transitions
-- ARIA labels on all fields
-- Minimum 44px tap targets on all interactive elements
+- Spring physics (`mass: 0.5, stiffness: 500`) for all transitions
+- Disabled state uses muted text on surface background
 
 ---
 
@@ -222,27 +234,26 @@ Build a login form using DESIGN.md.
 
 | Rule | Severity | What it checks |
 |------|----------|----------------|
-| `broken-ref` | error | Token references `{path.to.token}` must resolve |
+| `broken-ref` | error | Token references must resolve |
 | `missing-primary` | warning | A kinetic or primary color must exist |
-| `contrast-ratio` | warning | WCAG AA minimum 4.5:1 for text/background pairs |
-| `orphaned-tokens` | warning | Defined colors should be referenced by components |
+| `contrast-ratio` | warning | WCAG AA minimum 4.5:1 |
+| `orphaned-tokens` | warning | Colors should be used by components |
 | `fitts-law` | error | Interactive elements must be ≥ 44×44px |
-| `energy-conservation` | error | Kinetic color must contrast against Void background |
+| `energy-conservation` | error | Kinetic must contrast against Void |
 | `nested-radius-law` | error | Outer radius must be ≥ padding |
-| `token-summary` | info | Count of tokens in each section |
-| `missing-typography` | warning | Typography tokens should exist alongside colors |
+| `token-summary` | info | Count of tokens per section |
+| `missing-typography` | warning | Typography must exist alongside colors |
 
 ---
 
 ## Examples
 
-Three reference implementations — each a complete product design system derived from Physics Engine laws:
-
 | Example | Theme | Demonstrates |
 |---------|-------|--------------|
-| [`dark-command`](examples/dark-command/) | AI chat / dev console | Energy levels, dual typography, motion layer |
-| [`kinetic-commerce`](examples/kinetic-commerce/) | E-commerce product page | Single kinetic focal point, success state physics |
+| [`dark-command`](examples/dark-command/) | AI chat / dev console | Energy levels, motion layer, dual typography |
+| [`kinetic-commerce`](examples/kinetic-commerce/) | E-commerce product page | Single kinetic focal point, success state |
 | [`calm-focus`](examples/calm-focus/) | Productivity / notes | Physics of restraint, prose typography |
+| [`material-3`](examples/material-3/) | Google Material Design 3 | Any design system can be encoded |
 
 Each example includes `DESIGN.md`, `design_tokens.json`, `tailwind.config.js`, and `README.md`.
 
@@ -259,38 +270,34 @@ design-physics-engine/
 │   ├── export.ts          ← Export to Tailwind / DTCG / SwiftUI
 │   └── parse.ts           ← DESIGN.md parser
 ├── examples/
-│   ├── dark-command/      ← AI chat interface example
-│   ├── kinetic-commerce/  ← E-commerce example
-│   └── calm-focus/        ← Productivity app example
+│   ├── dark-command/
+│   ├── kinetic-commerce/
+│   ├── calm-focus/
+│   └── material-3/        ← Google M3 encoded as Physics Engine
 └── docs/
-    └── spec.md            ← Full specification
+    └── spec.md            ← Full specification v1.1
 ```
 
 ---
 
 ## Compatibility
 
-Physics Engine's `DESIGN.md` format is compatible with and extends [`@google-labs-code/design.md`](https://github.com/google-labs-code/design.md). Any valid Physics Engine file is a valid `@google-labs-code/design.md` file.
+Physics Engine's `DESIGN.md` is compatible with and extends [`@google-labs-code/design.md`](https://github.com/google-labs-code/design.md).
 
-Physics Engine adds:
-- `motion` token section (spring physics presets) — absent from Google's spec
-- `energy-conservation` and `nested-radius-law` linting rules
-- `fitts-law` linting rule
-- Energy Level semantic naming convention
-- SwiftUI export target
+Physics Engine adds: `motion` tokens · `success`/`warning` colors · data viz palette · `label`/`caption`/`code` typography · component states (disabled, error, loading) · SwiftUI export · stricter linting (Fitts Law, energy-conservation, nested-radius-law).
 
 ```bash
-npx @google-labs-code/design.md lint DESIGN.md        # Google's linter
-npx @trubnikov/physics-engine lint DESIGN.md           # Physics Engine linter (stricter + motion)
+npx @google-labs-code/design.md lint DESIGN.md   # Google's linter
+npx @dimkant/physics-engine lint DESIGN.md        # Physics Engine (stricter)
 ```
 
 ---
 
 ## Roadmap
 
-- **v1.1** — Motion token validation in linter + Framer Motion code generation
-- **v1.2** — OKLCH color space (`L` axis maps directly to Energy Levels)
-- **v2.0** — VS Code extension (live linting) · Figma Variables sync
+- **v1.1** — Motion token validation in linter · Framer Motion code generation
+- **v1.2** — OKLCH color space (`L` axis maps to Energy Levels)
+- **v2.0** — VS Code extension · Figma Variables sync
 
 ---
 

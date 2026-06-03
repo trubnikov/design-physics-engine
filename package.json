@@ -1,6 +1,6 @@
 {
   "name": "@dimkant/physics-engine",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A generative design system based on physical laws, not static values. Every dimension, color, and motion is derived — never hardcoded.",
   "type": "module",
   "main": "dist/cli.js",

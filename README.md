@@ -301,6 +301,22 @@ npx @dimkant/physics-engine lint DESIGN.md        # Physics Engine (stricter)
 
 ---
 
+
+---
+
+## Part of the Exo-Somatic research program
+
+This repository is one layer of a single research program on verifiable cognition:
+
+**[Exo-Somatic](https://github.com/trubnikov/Exo-Somatic)** (theory: substrate-independent minds)
+→ **[SES](https://github.com/trubnikov/SES)** (contract: signed identity snapshots)
+→ **[qca-cycle](https://github.com/trubnikov/qca-cycle)** (mechanism: the cognitive loop)
+→ **[Evidence](https://github.com/NousResearch/hermes-agent/pull/43306)** (substrate transition test)
+
+Adjacent track: **[Liquid-Context-Protocol](https://github.com/trubnikov/Liquid-Context-Protocol)** — the same contract-first idea applied to LLM tool execution.
+
+---
+
 ## License
 
 MIT ©2026 [Dima Trubnikov](https://github.com/trubnikov)
